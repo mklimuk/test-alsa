@@ -45,7 +45,7 @@ func main() {
 			break
 		}
 
-		convertBuffers(buf, buf16)
+		convertBuffers(buf, buf16, read)
 		if wrote, err = device.Write(buf16); err != nil {
 			fmt.Fprintf(os.Stderr, "Write error : %v\n", err)
 			os.Exit(4)
@@ -57,8 +57,8 @@ func main() {
 
 }
 
-func convertBuffers(buf []byte, buf16 []int16) {
-	for i := range buf {
+func convertBuffers(buf []byte, buf16 []int16, read int) {
+	for i := 0; i < read; i++ {
 		// assuming little endian
 		buf16[i] = int16(binary.LittleEndian.Uint16(buf[i*sizeofInt16 : (i+1)*sizeofInt16]))
 	}
