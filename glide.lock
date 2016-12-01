@@ -1,0 +1,10 @@
+hash: de5832ebc4f3d8e875b9dd0f26a50d5afc0048fe4dfc7fead0ba428d17d4bc4c
+updated: 2016-12-01T09:24:48.613853675+01:00
+imports:
+- name: github.com/cocoonlife/goalsa
+  version: b711ae6f3eff1a4f0cc4edfe321ab171027f85d4
+- name: github.com/Narsil/alsa-go
+  version: deca482488fbb14942371b9fe8d46c15504dd830
+- name: github.com/urfave/cli
+  version: 0bdeddeeb0f650497d603c4ad7b20cfe685682f6
+testImports: []
