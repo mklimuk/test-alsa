@@ -23,7 +23,7 @@ func main() {
 	r := bufio.NewReader(f)
 
 	var device *alsa.PlaybackDevice
-	if device, err = alsa.NewPlaybackDevice(os.Args[3], 1, alsa.FormatU16LE, 22050, alsa.BufferParams{BufferFrames: 10, PeriodFrames: 4, Periods: 2}); err != nil {
+	if device, err = alsa.NewPlaybackDevice(os.Args[3], 1, alsa.FormatS16LE, 22050, alsa.BufferParams{BufferFrames: 1024, PeriodFrames: 256, Periods: 4}); err != nil {
 		fmt.Printf("Could not create device. %v", err)
 		os.Exit(1)
 	}
@@ -31,12 +31,12 @@ func main() {
 	var read int
 	var wrote int
 	defer device.Close()
-	buf := make([]byte, 1024)
-	buf16 := make([]int16, 512)
+	buf := make([]byte, 2048)
+	buf16 := make([]int16, 1024)
 
 	for {
 		if read, err = r.Read(buf); err != nil && err != io.EOF {
-			fmt.Fprintf(os.Stderr, "Write error : %v\n", err)
+			fmt.Fprintf(os.Stderr, "Read error : %v\n", err)
 			os.Exit(3)
 		}
 		if read == 0 {
@@ -48,9 +48,11 @@ func main() {
 			fmt.Fprintf(os.Stderr, "Write error : %v\n", err)
 			os.Exit(4)
 		}
-		if wrote != read {
-			fmt.Fprintf(os.Stderr, "Did not write whole buffer (Wrote %v, expected %v)\n", wrote, read)
+
+		if wrote != read/2 {
+			fmt.Printf("Read %d bytes, wrote %d frames", read, wrote)
 		}
+
 	}
 
 }
