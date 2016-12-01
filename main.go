@@ -10,8 +10,6 @@ import (
 	alsa "github.com/cocoonlife/goalsa"
 )
 
-const sizeofInt16 = 2 //bytes
-
 func main() {
 	file := os.Args[1]
 	var f *os.File
@@ -34,7 +32,7 @@ func main() {
 	var wrote int
 	defer device.Close()
 	buf := make([]byte, 1024)
-	buf16 := make([]int16, len(buf)/sizeofInt16)
+	buf16 := make([]int16, 512)
 
 	for {
 		if read, err = r.Read(buf); err != nil && err != io.EOF {
@@ -45,7 +43,7 @@ func main() {
 			break
 		}
 
-		convertBuffers(buf, buf16, read)
+		convertBuffers(buf, buf16)
 		if wrote, err = device.Write(buf16); err != nil {
 			fmt.Fprintf(os.Stderr, "Write error : %v\n", err)
 			os.Exit(4)
@@ -57,8 +55,9 @@ func main() {
 
 }
 
-func convertBuffers(buf []byte, buf16 []int16, read int) {
-	for i := 0; i < read; i++ {
+func convertBuffers(buf []byte, buf16 []int16) {
+	for i := range buf {
+		fmt.Println(i)
 		// assuming little endian
 		buf16[i] = int16(binary.LittleEndian.Uint16(buf[i*sizeofInt16 : (i+1)*sizeofInt16]))
 	}
