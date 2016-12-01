@@ -2,12 +2,15 @@ package main
 
 import (
 	"bufio"
+	"encoding/binary"
 	"fmt"
 	"io"
 	"os"
 
 	alsa "github.com/cocoonlife/goalsa"
 )
+
+const sizeofInt16 = 2 //bytes
 
 func main() {
 	file := os.Args[1]
@@ -21,20 +24,8 @@ func main() {
 
 	r := bufio.NewReader(f)
 
-	var format alsa.Format
-	switch os.Args[2] {
-	case "1":
-		format = alsa.FormatU16LE
-	case "2":
-		format = alsa.FormatU16BE
-	case "3":
-		format = alsa.FormatS16LE
-	case "4":
-		format = alsa.FormatS16BE
-	}
-
 	var device *alsa.PlaybackDevice
-	if device, err = alsa.NewPlaybackDevice(os.Args[3], 1, format, 22050, alsa.BufferParams{BufferFrames: 10, PeriodFrames: 4, Periods: 2}); err != nil {
+	if device, err = alsa.NewPlaybackDevice(os.Args[3], 1, alsa.FormatU16LE, 22050, alsa.BufferParams{BufferFrames: 10, PeriodFrames: 4, Periods: 2}); err != nil {
 		fmt.Printf("Could not create device. %v", err)
 		os.Exit(1)
 	}
@@ -43,6 +34,8 @@ func main() {
 	var wrote int
 	defer device.Close()
 	buf := make([]byte, 1024)
+	buf16 := make([]int16, len(buf)/sizeofInt16)
+
 	for {
 		if read, err = r.Read(buf); err != nil && err != io.EOF {
 			fmt.Fprintf(os.Stderr, "Write error : %v\n", err)
@@ -52,7 +45,8 @@ func main() {
 			break
 		}
 
-		if wrote, err = device.Write(buf); err != nil {
+		convertBuffers(buf, buf16)
+		if wrote, err = device.Write(buf16); err != nil {
 			fmt.Fprintf(os.Stderr, "Write error : %v\n", err)
 			os.Exit(4)
 		}
@@ -61,4 +55,11 @@ func main() {
 		}
 	}
 
+}
+
+func convertBuffers(buf []byte, buf16 []int16) {
+	for i := range buf {
+		// assuming little endian
+		buf16[i] = int16(binary.LittleEndian.Uint16(buf[i*sizeofInt16 : (i+1)*sizeofInt16]))
+	}
 }
