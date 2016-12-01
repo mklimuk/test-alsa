@@ -59,6 +59,6 @@ func convertBuffers(buf []byte, buf16 []int16) {
 	for i := range buf {
 		fmt.Println(i)
 		// assuming little endian
-		buf16[i] = int16(binary.LittleEndian.Uint16(buf[i*sizeofInt16 : (i+1)*sizeofInt16]))
+		buf16[i] = int16(binary.LittleEndian.Uint16(buf[i*2 : (i+1)*2]))
 	}
 }
