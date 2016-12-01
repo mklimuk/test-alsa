@@ -21,23 +21,26 @@ func main() {
 
 	r := bufio.NewReader(f)
 
-	var f alsa.Format
+	var format alsa.Format
 	switch os.Args[2] {
 	case "1":
-		f = alsa.FormatU16LE
+		format = alsa.FormatU16LE
 	case "2":
-		f = alsa.FormatU16BE
+		format = alsa.FormatU16BE
 	case "3":
-		f = alsa.FormatS16LE
+		format = alsa.FormatS16LE
 	case "4":
-		f = alsa.FormatS16BE
+		format = alsa.FormatS16BE
 	}
 
-	if device, err = alsa.NewPlaybackDevice("husar-audio", 1, f, 22050, alsa.BufferParams{BufferFrames: 10, PeriodFrames: 4, Periods: 2}); err != nil {
+	var device *alsa.PlaybackDevice
+	if device, err = alsa.NewPlaybackDevice("husar-audio", 1, format, 22050, alsa.BufferParams{BufferFrames: 10, PeriodFrames: 4, Periods: 2}); err != nil {
 		fmt.Printf("Could not create device. %v", err)
 		os.Exit(1)
 	}
 
+	var read int
+	var wrote int
 	defer device.Close()
 	buf := make([]byte, 1024)
 	for {
