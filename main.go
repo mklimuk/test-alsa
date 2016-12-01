@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"strconv"
 
 	alsa "github.com/cocoonlife/goalsa"
 )
@@ -23,7 +24,10 @@ func main() {
 	r := bufio.NewReader(f)
 
 	var device *alsa.PlaybackDevice
-	if device, err = alsa.NewPlaybackDevice(os.Args[3], 1, alsa.FormatS16LE, 22050, alsa.BufferParams{BufferFrames: 1024, PeriodFrames: 256, Periods: 4}); err != nil {
+	bFrames, _ := strconv.Atoi(os.Args[3])
+	pFrames, _ := strconv.Atoi(os.Args[4])
+	periods, _ := strconv.Atoi(os.Args[5])
+	if device, err = alsa.NewPlaybackDevice(os.Args[2], 1, alsa.FormatS16LE, 22050, alsa.BufferParams{BufferFrames: bFrames, PeriodFrames: pFrames, Periods: periods}); err != nil {
 		fmt.Printf("Could not create device. %v", err)
 		os.Exit(1)
 	}
@@ -31,8 +35,10 @@ func main() {
 	var read int
 	var wrote int
 	defer device.Close()
-	buf := make([]byte, 2048)
-	buf16 := make([]int16, 1024)
+
+	bufSize, _ := strconv.Atoi(os.Args[6])
+	buf := make([]byte, bufSize)
+	buf16 := make([]int16, bufSize/2)
 
 	for {
 		if read, err = r.Read(buf); err != nil && err != io.EOF {
