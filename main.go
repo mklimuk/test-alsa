@@ -34,7 +34,7 @@ func main() {
 	}
 
 	var device *alsa.PlaybackDevice
-	if device, err = alsa.NewPlaybackDevice("PCM", 1, format, 22050, alsa.BufferParams{BufferFrames: 10, PeriodFrames: 4, Periods: 2}); err != nil {
+	if device, err = alsa.NewPlaybackDevice(os.Args[3], 1, format, 22050, alsa.BufferParams{BufferFrames: 10, PeriodFrames: 4, Periods: 2}); err != nil {
 		fmt.Printf("Could not create device. %v", err)
 		os.Exit(1)
 	}
