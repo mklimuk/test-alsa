@@ -23,14 +23,19 @@ func main() {
 
 	conf := &config.AudioConf{DeviceBuffer: 4096, ReadBuffer: 8192, PeriodFrames: 2048, Periods: 2}
 	params := &audio.BufferParams{BufferFrames: conf.DeviceBuffer, PeriodFrames: conf.PeriodFrames, Periods: conf.Periods}
-	p := audio.New(conf, alsa.NewPlaybackDevice(params), "/etc/husar/dong.wav")
+
+
+	var err error
+	var dev audio.PlaybackDevice
+	if dev, err = alsa.NewPlaybackDevice(params); err != nil {
+		panic(err)
+	}
+
+	p := audio.New(conf, , "/etc/husar/dong.wav")
 	f := websocket.NewFactory()
 
 	clog.Info("Initializing REST router...")
-	var err error
-	if z, err = api.NewPlaybackAPI(p, f); err != nil {
-		panic(err)
-	}
+	if z := api.NewPlaybackAPI(p, f)
 
 	router := gin.New()
 	z.AddRoutes(router)
