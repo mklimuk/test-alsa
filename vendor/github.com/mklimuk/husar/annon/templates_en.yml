@@ -1,0 +1,199 @@
+-
+  id: "setup_en"
+  type: "setup"
+  lang: en
+  categories:
+    - "Język angielski"
+    - Pociągi
+  title: "[Angielski] Podstawienie pociągu"
+  description: >+
+    Train [kategoria] [nazwa] on track [tor] platform [peron]
+    departing to [stacja końcowa] is now ready for boarding.
+    [komunikaty dodatkowe].
+    Scheduled departure time: [godzina odjazdu].
+  templates:
+    human: >-
+      Train {{- with .Category}}{{.}} {{end}}
+      {{- with .Name}}{{.}} {{end}}on track {{.Track}}, platform {{.Platform}}
+      {{- /**/}} departing to {{.To}} is now ready for boarding.
+      Train {{- with .Category}}{{.}} {{end}}
+      {{- with .Name}}{{.}} {{end}}on track {{.Track}}, platform {{.Platform}}
+      {{- /**/}} departing to {{.To}} is now ready for boarding.
+      {{with .Custom}}{{.}}{{end}}
+      Scheduled departure time: {{.Departure}}.
+    tts: >-
+      <s xml:lang="en">Train {{with .Category}}<voice xml:lang="pl">{{.}}</voice> {{end}}{{with .NameLower}}<voice xml:lang="pl">{{.}}</voice> {{end}}
+      {{- /**/}}<voice xml:lang="en"> on track {{.Track}}, platform {{.Platform}}, departing to </voice><voice xml:lang="pl">{{.To}}</voice>, <voice xml:lang="en">is now ready for boarding.</voice>
+      Train {{with .Category}}<voice xml:lang="pl">{{.}}</voice> {{end}}{{with .NameLower}}<voice xml:lang="pl">{{.}}</voice> {{end}}
+      {{- /**/}}<voice xml:lang="en"> on track {{.Track}}, platform {{.Platform}}, departing to </voice><voice xml:lang="pl">{{.To}}</voice>, <voice xml:lang="en">is now ready for boarding.
+      {{with .Custom}}{{.}}{{end}}
+      Scheduled departure time: {{.Departure}}.</voice></s>
+    html: >-
+      Train {{with .Category}}<span class="tpl-param" data-name="category">{{.}}</span> {{end}}
+      {{with .Name}}<span class="tpl-param" data-name="name">{{.}}</span> {{end}}
+      on track <span class="tpl-param" data-name="track">{{.Track}} </span>, platform <span class="tpl-param" data-name="platform">{{.Platform}} </span>
+      departing to <span class="tpl-param" data-name="category">{{.To}}</span>
+      is now ready for boarding.
+      Train {{with .Category}}<span class="tpl-param" data-name="category">{{.}}</span> {{end}}
+      {{with .Name}}<span class="tpl-param" data-name="name">{{.}}</span> {{end}}
+      on track <span class="tpl-param" data-name="track">{{.Track}} </span>, platform <span class="tpl-param" data-name="platform">{{.Platform}} </span>
+      departing to <span class="tpl-param" data-name="category">{{.To}}</span>
+      is now ready for boarding.
+      {{with .Custom}}{{.}}<br/>{{end}}
+      {{- /* */}}<br/>Scheduled departure time: <span class="tpl-param" data-name="departure">{{.Departure}}</span>.
+-
+  id: "arrival_en"
+  type: "arrival"
+  title: "[Angielski] Przyjazd pociągu"
+  lang: en
+  categories:
+    - "Język angielski"
+    - Pociągi
+  description: >+
+    [Delayed] [przewoźnik] [kategoria] train [nazwa] to [stacja końcowa]
+    is arriving on track [tor] platform [peron].
+    [komunikaty dodatkowe].
+    Please stand away from the platform edge.
+    Scheduled departure time: [godzina odjazdu].
+  templates:
+    human: >-
+      {{- if .Delayed}}Delayed {{end}} {{.Category}}
+      {{- /**/}} from {{.From}} {{if not .Last}} to {{.To}}{{end}}
+      {{- with .By}} </speech: {{.}}{{end -}}
+      {{- /**/}} is arriving on track {{.Track}}, platform {{.Platform}}.
+      {{- if .Delayed}}Delayed {{end}} {{.Category}}
+      {{- /**/}} from {{.From}} {{if not .Last}} to {{.To}}{{end}}
+      {{- with .By}} via: {{.}}{{end -}}
+      {{- /**/}} is arriving on track {{.Track}}, platform {{.Platform}}.
+      {{with .Custom}}{{.}}{{end -}}
+      {{- if .Last}}Train terminates here. {{end -}}
+      {{- /**/}}Please stand away from the platform edge.
+      {{- if not .Last}} Scheduled departure time: {{.Departure}}.{{end -}}
+    tts: >-
+      {{- if .Delayed}}<voice xml:lang="en">Delayed</voice> {{end}}
+      {{- with .Category}}<voice xml:lang="pl">{{.}}</voice>{{end}}
+      {{- /**/}} <voice xml:lang="en">train</voice> {{with .NameLower}}<voice xml:lang="pl">{{.}}</voice>{{end}}
+      {{- /**/}} <voice xml:lang="en">from</voice> <voice xml:lang="pl">{{.From}}</voice>,
+      {{- if not .Last}} <voice xml:lang="en">to</voice> <voice xml:lang="pl">{{.To}}</voice>,{{end}}
+      {{- with .By}} <voice xml:lang="en">via:</voice> <voice xml:lang="pl">{{.}}</voice>,{{end}}
+      {{- /**/}} <voice xml:lang="en">is arriving on track {{.Track}}, platform {{.Platform}}.</voice>
+      {{- if .Delayed}} <voice xml:lang="en">Delayed</voice> {{end}}
+      {{- with .Category}}<voice xml:lang="pl">{{.}}</voice>{{end}}
+      {{- /**/}} <voice xml:lang="en">train</voice> {{with .NameLower}}<voice xml:lang="pl">{{.}}</voice>{{end}}
+      {{- /**/}} <voice xml:lang="en">from</voice> <voice xml:lang="pl">{{.From}}</voice>,
+      {{- if not .Last}} <voice xml:lang="en">to</voice> <voice xml:lang="pl">{{.To}}</voice>,{{end}}
+      {{- with .By}} <voice xml:lang="en">via:</voice> <voice xml:lang="pl">{{.}}</voice>,{{end}}
+      {{- /**/}} <voice xml:lang="en">is arriving on track {{.Track}}, platform {{.Platform}}.
+      {{with .Custom}}{{.}}{{end}}
+      Please stand away from the platform edge.
+      {{if not .Last}}Scheduled departure time: {{.Departure}}.{{end}}</voice>
+    html: >-
+      {{- if .Delayed}}Delayed {{end}}
+      {{- with .Category}}<span class="tpl-param" data-name="category">{{.}}</span>{{end}} train
+      {{- with .Name}} <span class="tpl-param" data-name="name">{{.}}</span>{{end}}
+      {{- /* */}} from <span class="tpl-param" data-name="from">{{.From}}</span>
+      {{- if not .Last}} to <span class="tpl-param" data-name="category">{{.To}}</span>{{end -}}
+      {{- with .By}}, via: <span class="tpl-param" data-name="by">{{.}}</span>{{end -}}
+      {{- /* */}}, is arriving on track <span class="tpl-param" data-name="track">{{.Track}}</span>
+      {{- /* */}} platform <span class="tpl-param" data-name="platform">{{.Platform}}</span>.
+      {{- if .Delayed}}Delayed {{end}}
+      {{- with .Category}}<span class="tpl-param" data-name="category">{{.}}</span> {{end}}train
+      {{- with .Name}} <span class="tpl-param" data-name="name">{{.}}</span>{{end}}
+      {{- /* */}} from <span class="tpl-param" data-name="from">{{.From}}</span>
+      {{- if not .Last}} to <span class="tpl-param" data-name="category">{{.To}}</span>{{end -}}
+      {{- with .By}}, via: <span class="tpl-param" data-name="by">{{.}}</span>{{end -}}
+      {{- /* */}}, is arriving on track <span class="tpl-param" data-name="track">{{.Track}}</span>
+      {{- /* */}} platform <span class="tpl-param" data-name="platform">{{.Platform}}</span>.
+      {{with .Custom}}{{.}}{{end}}
+      {{- /* */}}<br/>Please stand away from the platform edge.
+      {{- if not .Last}}<br/>Scheduled departure time: <span class="tpl-param" data-name="departure">{{.Departure}}</span>.{{end}}
+-
+  id: "departure_en"
+  type: "departure"
+  title: "[Angielski] Odjazd pociągu"
+  lang: en
+  categories:
+    - Język angielski
+    - Pociągi
+  description: >+
+    [Delayed] [przewoźnik] [kategoria] train [nazwa] to [stacja końcowa]
+    is departing from track [tor] platform [peron].
+    [komunikaty dodatkowe].
+    Please stand away from the platform edge. We wish you a pleasant journey.
+  templates:
+    human: >-
+      {{- if .Delayed}}Delayed {{end}}
+      {{- with .Carrier}} {{.}}{{end}}{{ .Category}} train
+      {{- with .Name}} {{.}}{{end}} to {{.To}}
+      {{- with .By}} via: {{.}}{{end -}}
+      {{- /**/}} is departing from track {{.Track}} platform {{.Platform -}}. {{/**/ -}}
+      {{- if .Delayed}}Delayed {{end}}
+      {{- with .Carrier}} {{.}}{{end}}{{ .Category}} train
+      {{- with .Name}} {{.}}{{end}} to {{.To}}
+      {{- with .By}} via: {{.}}{{end -}}
+      {{- /**/}} is departing from track {{.Track}} platform {{.Platform -}}.
+      {{with .Custom}}{{.}} {{end}}
+      Please stand away from the platform edge. We wish you a pleasant journey.
+    tts: >-
+      {{- if .Delayed}}<voice xml:lang="en">Delayed</voice> {{end}}
+      {{- with .Category}}<voice xml:lang="pl">{{ .Category}}</voice>{{end}} <voice xml:lang="en">train</voice>
+      {{- with .NameLower}} <voice xml:lang="pl">{{.}}</voice>{{end}} <voice xml:lang="en">to</voice> <voice xml:lang="pl">{{.To}}</voice>,
+      {{- with .By}} <voice xml:lang="en">via:</voice> <voice xml:lang="pl">{{.}}</voice>,{{end -}}
+      {{- /**/}} <voice xml:lang="en">is departing from track {{.Track}}, platform {{.Platform}}.</voice>
+      {{- if .Delayed}}<voice xml:lang="en">Delayed</voice> {{end}}
+      {{- with .Category}}<voice xml:lang="pl">{{ .Category}}</voice>{{end}} <voice xml:lang="en">train</voice>
+      {{- with .NameLower}} <voice xml:lang="pl">{{.}}</voice>{{end}} <voice xml:lang="en">to</voice> <voice xml:lang="pl">{{.To}}</voice>,
+      {{- with .By}} <voice xml:lang="en">via:</voice> <voice xml:lang="pl">{{.}}</voice>,{{end -}}
+      {{- /**/}} <voice xml:lang="en">is departing from track {{.Track}}, platform {{.Platform}}.
+      {{with .Custom}}{{.}}{{end}}
+      Please stand away from the platform edge. We wish you a pleasant journey.</voice>
+    html: >-
+      {{- if .Delayed}}Delayed {{end}}
+      {{- with .Category}}<span class="tpl-param" data-name="category">{{.}}</span> {{end}}
+      train {{ with .Name}}<span class="tpl-param" data-name="name">{{.}}</span>{{end}}
+      {{- /* */}} to <span class="tpl-param" data-name="category">{{.To}}</span>
+      {{- with .By}}, via: <span class="tpl-param" data-name="by">{{.}}</span>{{end -}}
+      {{- /* */}}, is departing from track <span class="tpl-param" data-name="track">{{.Track}}</span>
+      {{- /* */}} platform <span class="tpl-param" data-name="platform">{{.Platform}}</span>.
+      {{- if .Delayed}} Delayed {{end}}
+      {{- with .Category}}<span class="tpl-param" data-name="category">{{.}}</span> {{end}}
+      train {{ with .Name}}<span class="tpl-param" data-name="name">{{.}}</span>{{end}}
+      {{- /* */}} to <span class="tpl-param" data-name="category">{{.To}}</span>
+      {{- with .By}}, via: <span class="tpl-param" data-name="by">{{.}}</span>{{end -}}
+      {{- /* */}}, is departing from track <span class="tpl-param" data-name="track">{{.Track}}</span>
+      {{- /* */}} platform <span class="tpl-param" data-name="platform">{{.Platform}}</span>.
+      {{- with .Custom}}<br/>{{.}}{{end}}
+      {{- /* */}}<br/>Please stand away from the platform edge. We wish you a pleasant journey.
+-
+  id: "luggage_eng"
+  type: "info"
+  lang: en
+  categories:
+    - "Język angielski"
+    - Informacyjne
+  title: "[Angielski] Prośba o zwrócenie uwagi na bagaż"
+  description: "Please do not leave luggage unattended anywhere at the station. Any unattended luggage will be removed and destroyed at the owner's expense. If you see any unattended items or suspicious behaviour,  please report it to a member of staff, the police or call the emergency number 22 474 00 00."
+  templates:
+    human: >-
+        Please do not leave luggage unattended anywhere at the station. Any unattended luggage will be removed and destroyed at the owner's expense. If you see any unattended items or suspicious behaviour,  please report it to a member of staff, the police or call the emergency number 22 474 00 00.
+    tts: >-
+        <voice xml:lang="en">Please do not leave luggage unattended anywhere at the station. Any unattended luggage will be removed and destroyed at the owner's expense. If you see any unattended items or suspicious behaviour,  please report it to a member of staff, the police or call
+        the emergency number <say-as interpret-as="telephone">22 474 00 00</say-as>.</voice>
+    html: >-
+        Please do not leave luggage unattended anywhere at the station. Any unattended luggage will be removed and destroyed at the owner's expense. If you see any unattended items or suspicious behaviour,  please report it to a member of staff, the police or call the emergency number 22 474 00 00.
+-
+  id: "smoking_eng"
+  type: "info"
+  lang: en
+  categories:
+    - "Język angielski"
+    - Informacyjne
+  title: "[Angielski] Zakaz palenia"
+  description: "Please note smoking or drinking alcohol are not permitted anywhere at this station."
+  templates:
+    human: >-
+        Please note smoking or drinking alcohol are not permitted anywhere at this station.
+    tts: >-
+        <voice xml:lang="en">Please note smoking or drinking alcohol are not permitted anywhere at this station.</voice>
+    html: >-
+        Please note smoking or drinking alcohol are not permitted anywhere at this station.

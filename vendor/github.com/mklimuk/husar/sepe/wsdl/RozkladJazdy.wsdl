@@ -1,0 +1,1000 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions name="RozkladJazdy" targetNamespace="http://sdip.plk-sa.pl/v1.1"
+	xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:wsam="http://www.w3.org/2007/05/addressing/metadata"
+	xmlns:wsx="http://schemas.xmlsoap.org/ws/2004/09/mex" xmlns:wsap="http://schemas.xmlsoap.org/ws/2004/08/addressing/policy"
+	xmlns:msc="http://schemas.microsoft.com/ws/2005/12/wsdl/contract"
+	xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy" xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+	xmlns:wsu="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"
+	xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/"
+	xmlns:tns="http://sdip.plk-sa.pl/v1.1" xmlns:wsa10="http://www.w3.org/2005/08/addressing"
+	xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl" xmlns:wsa="http://schemas.xmlsoap.org/ws/2004/08/addressing">
+	<wsp:Policy wsu:Id="BasicHttpBinding_IRozkladJazdy_policy">
+		<wsp:ExactlyOne>
+			<wsp:All>
+				<sp:TransportBinding
+					xmlns:sp="http://schemas.xmlsoap.org/ws/2005/07/securitypolicy">
+					<wsp:Policy>
+						<sp:TransportToken>
+							<wsp:Policy>
+								<sp:HttpsToken RequireClientCertificate="true" />
+							</wsp:Policy>
+						</sp:TransportToken>
+						<sp:AlgorithmSuite>
+							<wsp:Policy>
+								<sp:Basic256 />
+							</wsp:Policy>
+						</sp:AlgorithmSuite>
+						<sp:Layout>
+							<wsp:Policy>
+								<sp:Strict />
+							</wsp:Policy>
+						</sp:Layout>
+					</wsp:Policy>
+				</sp:TransportBinding>
+			</wsp:All>
+		</wsp:ExactlyOne>
+	</wsp:Policy>
+	<wsdl:types>
+		<xs:schema elementFormDefault="qualified" targetNamespace="http://sdip.plk-sa.pl/v1.1"
+			xmlns:xs="http://www.w3.org/2001/XMLSchema">
+			<xs:import namespace="http://microsoft.com/wsdl/types/" />
+			<xs:element
+				name="PobierzRozkladPlanowyNastepneZamkniecieDlaWszystkichStacji">
+				<xs:complexType />
+			</xs:element>
+			<xs:element
+				name="PobierzRozkladPlanowyNastepneZamkniecieDlaWszystkichStacjiResponse">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element minOccurs="0" maxOccurs="1"
+							name="PobierzRozkladPlanowyNastepneZamkniecieDlaWszystkichStacjiResult">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element minOccurs="0" maxOccurs="1" name="RozkladPlanowy"
+										type="tns:RozkladPlanowyTyp" />
+									<xs:element minOccurs="0" maxOccurs="1" name="Utrudnienia"
+										type="tns:ArrayOfUtrudnienieTyp" />
+									<xs:element minOccurs="0" maxOccurs="1" name="Stacje"
+										type="tns:ArrayOfStacjaTyp" />
+									<xs:element minOccurs="0" maxOccurs="1" name="Tlumaczenia"
+										type="tns:ArrayOfTlumaczenieTyp" />
+									<xs:element minOccurs="0" maxOccurs="1" name="Uslugi"
+										type="tns:ArrayOfUslugaTyp" />
+									<xs:element minOccurs="0" maxOccurs="1" name="RodzajeWagonow"
+										type="tns:ArrayOfRodzajWagonuTyp" />
+									<xs:element minOccurs="0" maxOccurs="1"
+										name="RodzajePowiazan" type="tns:ArrayOfRodzajPowiazaniaTyp" />
+									<xs:element minOccurs="0" maxOccurs="1" name="Przewoznicy"
+										type="tns:ArrayOfPrzewoznikTyp" />
+									<xs:element minOccurs="0" maxOccurs="1"
+										name="KategorieHandlowe" type="tns:ArrayOfKategoriaHandlowaTyp" />
+									<xs:element minOccurs="0" maxOccurs="1" name="WersjeJezykowe"
+										type="tns:ArrayOfWersjaJezykowaTyp" />
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:complexType name="RozkladPlanowyTyp">
+				<xs:sequence>
+					<xs:element minOccurs="1" maxOccurs="1" name="CzasGeneracji"
+						type="xs:dateTime" />
+					<xs:element minOccurs="1" maxOccurs="1" name="ZakresOd"
+						type="xs:date" />
+					<xs:element minOccurs="1" maxOccurs="1" name="ZakresDo"
+						type="xs:date" />
+					<xs:element minOccurs="0" maxOccurs="1" name="Trasy"
+						type="tns:ArrayOfTrasaTyp" />
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="ArrayOfTrasaTyp">
+				<xs:sequence>
+					<xs:element minOccurs="0" maxOccurs="unbounded" name="Trasa"
+						type="tns:TrasaTyp" />
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="TrasaTyp">
+				<xs:sequence>
+					<xs:element minOccurs="1" maxOccurs="1" name="RozkladID"
+						type="xs:short" />
+					<xs:element minOccurs="1" maxOccurs="1" name="ZamowienieSKRJID"
+						type="xs:int" />
+					<xs:element minOccurs="1" maxOccurs="1" name="NumerKrajowy"
+						nillable="true" type="xs:string" />
+					<xs:element minOccurs="1" maxOccurs="1"
+						name="NumerMiedzynarodowyWjazdowy" nillable="true" type="xs:string" />
+					<xs:element minOccurs="1" maxOccurs="1"
+						name="NumerMiedzynarodowyWyjazdowy" nillable="true" type="xs:string" />
+					<xs:element minOccurs="1" maxOccurs="1" name="Nazwa"
+						nillable="true" type="xs:string" />
+					<xs:element minOccurs="1" maxOccurs="1" name="KategorieHandlowe"
+						nillable="true" type="xs:string" />
+					<xs:element minOccurs="0" maxOccurs="1" name="Przewoznik"
+						type="xs:string" />
+					<xs:element minOccurs="1" maxOccurs="1"
+						name="RelacjaPoczatkowaID" type="xs:int" />
+					<xs:element minOccurs="1" maxOccurs="1" name="RelacjaKoncowaID"
+						type="xs:int" />
+					<xs:element minOccurs="1" maxOccurs="1" name="Powiazana"
+						type="xs:boolean" />
+					<xs:element minOccurs="0" maxOccurs="1"
+						name="KalendarzKursowania" type="tns:ArrayOfDate" />
+					<xs:element minOccurs="0" maxOccurs="1" name="StacjePlanowe"
+						type="tns:ArrayOfStacjaPlanowaTyp" />
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="ArrayOfDate">
+				<xs:sequence>
+					<xs:element minOccurs="0" maxOccurs="unbounded" name="Data"
+						type="xs:date" />
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="ArrayOfStacjaPlanowaTyp">
+				<xs:sequence>
+					<xs:element minOccurs="0" maxOccurs="unbounded" name="StacjaPlanowa"
+						type="tns:StacjaPlanowaTyp" />
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="StacjaPlanowaTyp">
+				<xs:sequence>
+					<xs:element minOccurs="1" maxOccurs="1" name="StacjaID"
+						type="xs:int" />
+					<xs:element minOccurs="1" maxOccurs="1" name="NumerNaTrasie"
+						type="xs:short" />
+					<xs:element minOccurs="1" maxOccurs="1" name="KategoriaWjazdowa"
+						nillable="true" type="xs:string" />
+					<xs:element minOccurs="1" maxOccurs="1" name="NumerWjazdowy"
+						nillable="true" type="xs:string" />
+					<xs:element minOccurs="1" maxOccurs="1" name="PeronWjazdowy"
+						nillable="true" type="xs:string" />
+					<xs:element minOccurs="1" maxOccurs="1" name="TorWjazdowy"
+						nillable="true" type="xs:string" />
+					<xs:element minOccurs="0" maxOccurs="1" name="DzienPrzyjazdu"
+						nillable="true" type="xs:short" />
+					<xs:element minOccurs="0" maxOccurs="1" name="CzasPrzyjazdu"
+						nillable="true" type="xs:time" />
+					<xs:element minOccurs="0" maxOccurs="1" name="DzienOdjazdu"
+						nillable="true" type="xs:short" />
+					<xs:element minOccurs="0" maxOccurs="1" name="CzasOdjazdu"
+						nillable="true" type="xs:time" />
+					<xs:element minOccurs="1" maxOccurs="1" name="KategoriaWyjazdowa"
+						nillable="true" type="xs:string" />
+					<xs:element minOccurs="1" maxOccurs="1" name="NumerWyjazdowy"
+						nillable="true" type="xs:string" />
+					<xs:element minOccurs="1" maxOccurs="1" name="PeronWyjazdowy"
+						nillable="true" type="xs:string" />
+					<xs:element minOccurs="1" maxOccurs="1" name="TorWyjazdowy"
+						nillable="true" type="xs:string" />
+					<xs:element minOccurs="0" maxOccurs="1" name="Sklady"
+						type="tns:ArrayOfSkladTyp" />
+					<xs:element minOccurs="0" maxOccurs="1" name="Powiazania"
+						type="tns:ArrayOfPowiazanieTyp" />
+					<xs:element minOccurs="0" maxOccurs="1" name="Utrudnienia"
+						type="tns:ArrayOfUtrudnienieStacjaPlanowaTyp" />
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="ArrayOfSkladTyp">
+				<xs:sequence>
+					<xs:element minOccurs="0" maxOccurs="unbounded" name="Sklad"
+						type="tns:SkladTyp" />
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="SkladTyp">
+				<xs:sequence>
+					<xs:element minOccurs="1" maxOccurs="1" name="ID" type="xs:long" />
+					<xs:element minOccurs="1" maxOccurs="1"
+						name="StacjaPoczatkowaNumerNaTrasie" type="xs:short" />
+					<xs:element minOccurs="0" maxOccurs="1" name="Dlugosc"
+						nillable="true" type="xs:short" />
+					<xs:element minOccurs="0" maxOccurs="1"
+						name="KalendarzKursowania" type="tns:ArrayOfDate" />
+					<xs:element minOccurs="0" maxOccurs="1" name="Uslugi"
+						type="tns:ArrayOfString" />
+					<xs:element minOccurs="0" maxOccurs="1" name="Wagony"
+						type="tns:ArrayOfWagonTyp" />
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="ArrayOfString">
+				<xs:sequence>
+					<xs:element minOccurs="0" maxOccurs="unbounded" name="Kod"
+						type="xs:string" />
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="ArrayOfWagonTyp">
+				<xs:sequence>
+					<xs:element minOccurs="0" maxOccurs="unbounded" name="Wagon"
+						type="tns:WagonTyp" />
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="WagonTyp">
+				<xs:sequence>
+					<xs:element minOccurs="1" maxOccurs="1" name="ID" type="xs:long" />
+					<xs:element minOccurs="1" maxOccurs="1" name="NumerKolejny"
+						type="xs:short" />
+					<xs:element minOccurs="1" maxOccurs="1" name="NumerHandlowy"
+						nillable="true" type="xs:string" />
+					<xs:element minOccurs="1" maxOccurs="1"
+						name="RelacjaPoczatkowaID" type="xs:int" />
+					<xs:element minOccurs="1" maxOccurs="1" name="RelacjaKoncowaID"
+						type="xs:int" />
+					<xs:element minOccurs="0" maxOccurs="1" name="RodzajWagonuKod"
+						type="xs:string" />
+					<xs:element minOccurs="0" maxOccurs="1" name="Uslugi"
+						type="tns:ArrayOfString" />
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="ArrayOfPowiazanieTyp">
+				<xs:sequence>
+					<xs:element minOccurs="0" maxOccurs="unbounded" name="Powiazanie"
+						type="tns:PowiazanieTyp" />
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="PowiazanieTyp">
+				<xs:sequence>
+					<xs:element minOccurs="1" maxOccurs="1" name="ID" type="xs:long" />
+					<xs:element minOccurs="1" maxOccurs="1" name="ZamowienieSKRJID"
+						type="xs:int" />
+					<xs:element minOccurs="1" maxOccurs="1" name="StacjaID"
+						type="xs:int" />
+					<xs:element minOccurs="1" maxOccurs="1"
+						name="StacjaNumerNaTrasie" type="xs:short" />
+					<xs:element minOccurs="0" maxOccurs="1"
+						name="RodzajPowiazaniaKod" type="xs:string" />
+					<xs:element minOccurs="0" maxOccurs="1"
+						name="KalendarzPowiazania" type="tns:ArrayOfDate" />
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="ArrayOfUtrudnienieStacjaPlanowaTyp">
+				<xs:sequence>
+					<xs:element minOccurs="0" maxOccurs="unbounded"
+						name="UtrudnienieStacjaPlanowa" type="tns:UtrudnienieStacjaPlanowaTyp" />
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="UtrudnienieStacjaPlanowaTyp">
+				<xs:sequence>
+					<xs:element minOccurs="1" maxOccurs="1" name="UtrudnienieID"
+						type="xs:long" />
+					<xs:element minOccurs="0" maxOccurs="1"
+						name="KalendarzKursowania" type="tns:ArrayOfDate" />
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="ArrayOfUtrudnienieTyp">
+				<xs:sequence>
+					<xs:element minOccurs="0" maxOccurs="unbounded" name="Utrudnienie"
+						type="tns:UtrudnienieTyp" />
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="UtrudnienieTyp">
+				<xs:sequence>
+					<xs:element minOccurs="1" maxOccurs="1" name="ID" type="xs:long" />
+					<xs:element minOccurs="0" maxOccurs="1" name="Tytul"
+						type="xs:string" />
+					<xs:element minOccurs="1" maxOccurs="1" name="TytulGUID"
+						type="q1:guid" xmlns:q1="http://microsoft.com/wsdl/types/" />
+					<xs:element minOccurs="0" maxOccurs="1" name="Komunikat"
+						type="xs:string" />
+					<xs:element minOccurs="1" maxOccurs="1" name="KomunikatGUID"
+						type="q2:guid" xmlns:q2="http://microsoft.com/wsdl/types/" />
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="ArrayOfStacjaTyp">
+				<xs:sequence>
+					<xs:element minOccurs="0" maxOccurs="unbounded" name="Stacja"
+						type="tns:StacjaTyp" />
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="StacjaTyp">
+				<xs:sequence>
+					<xs:element minOccurs="1" maxOccurs="1" name="ID" type="xs:int" />
+					<xs:element minOccurs="0" maxOccurs="1" name="Nazwa"
+						type="xs:string" />
+					<xs:element minOccurs="1" maxOccurs="1" name="NazwaGUID"
+						type="q3:guid" xmlns:q3="http://microsoft.com/wsdl/types/" />
+					<xs:element minOccurs="0" maxOccurs="1" name="NazwaSkrocona"
+						type="xs:string" />
+					<xs:element minOccurs="1" maxOccurs="1" name="NazwaSkroconaGUID"
+						type="q4:guid" xmlns:q4="http://microsoft.com/wsdl/types/" />
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="ArrayOfTlumaczenieTyp">
+				<xs:sequence>
+					<xs:element minOccurs="0" maxOccurs="unbounded" name="Tlumaczenie"
+						type="tns:TlumaczenieTyp" />
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="TlumaczenieTyp">
+				<xs:sequence>
+					<xs:element minOccurs="1" maxOccurs="1" name="ID" type="xs:long" />
+					<xs:element minOccurs="0" maxOccurs="1" name="Kod" type="xs:string" />
+					<xs:element minOccurs="1" maxOccurs="1" name="TrescGUID"
+						type="q5:guid" xmlns:q5="http://microsoft.com/wsdl/types/" />
+					<xs:element minOccurs="0" maxOccurs="1" name="Tresc"
+						type="xs:string" />
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="ArrayOfUslugaTyp">
+				<xs:sequence>
+					<xs:element minOccurs="0" maxOccurs="unbounded" name="Usluga"
+						type="tns:UslugaTyp" />
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="UslugaTyp">
+				<xs:sequence>
+					<xs:element minOccurs="0" maxOccurs="1" name="Kod" type="xs:string" />
+					<xs:element minOccurs="0" maxOccurs="1" name="Opis"
+						type="xs:string" />
+					<xs:element minOccurs="1" maxOccurs="1" name="OpisGUID"
+						type="q6:guid" xmlns:q6="http://microsoft.com/wsdl/types/" />
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="ArrayOfRodzajWagonuTyp">
+				<xs:sequence>
+					<xs:element minOccurs="0" maxOccurs="unbounded" name="RodzajWagonu"
+						type="tns:RodzajWagonuTyp" />
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="RodzajWagonuTyp">
+				<xs:sequence>
+					<xs:element minOccurs="0" maxOccurs="1" name="Kod" type="xs:string" />
+					<xs:element minOccurs="0" maxOccurs="1" name="Nazwa"
+						type="xs:string" />
+					<xs:element minOccurs="1" maxOccurs="1" name="NazwaGUID"
+						type="q7:guid" xmlns:q7="http://microsoft.com/wsdl/types/" />
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="ArrayOfRodzajPowiazaniaTyp">
+				<xs:sequence>
+					<xs:element minOccurs="0" maxOccurs="unbounded" name="RodzajPowiazania"
+						type="tns:RodzajPowiazaniaTyp" />
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="RodzajPowiazaniaTyp">
+				<xs:sequence>
+					<xs:element minOccurs="0" maxOccurs="1" name="Kod" type="xs:string" />
+					<xs:element minOccurs="0" maxOccurs="1" name="Nazwa"
+						type="xs:string" />
+					<xs:element minOccurs="1" maxOccurs="1" name="NazwaGUID"
+						type="q8:guid" xmlns:q8="http://microsoft.com/wsdl/types/" />
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="ArrayOfPrzewoznikTyp">
+				<xs:sequence>
+					<xs:element minOccurs="0" maxOccurs="unbounded" name="Przewoznik"
+						type="tns:PrzewoznikTyp" />
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="PrzewoznikTyp">
+				<xs:sequence>
+					<xs:element minOccurs="0" maxOccurs="1" name="Skrot"
+						type="xs:string" />
+					<xs:element minOccurs="0" maxOccurs="1" name="Nazwa"
+						type="xs:string" />
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="ArrayOfKategoriaHandlowaTyp">
+				<xs:sequence>
+					<xs:element minOccurs="0" maxOccurs="unbounded" name="KategoriaHandlowa"
+						type="tns:KategoriaHandlowaTyp" />
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="KategoriaHandlowaTyp">
+				<xs:sequence>
+					<xs:element minOccurs="0" maxOccurs="1" name="Symbol"
+						type="xs:string" />
+					<xs:element minOccurs="0" maxOccurs="1" name="PrzewoznikSkrot"
+						type="xs:string" />
+					<xs:element minOccurs="0" maxOccurs="1" name="Nazwa"
+						type="xs:string" />
+					<xs:element minOccurs="1" maxOccurs="1" name="NazwaGUID"
+						type="q9:guid" xmlns:q9="http://microsoft.com/wsdl/types/" />
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="ArrayOfWersjaJezykowaTyp">
+				<xs:sequence>
+					<xs:element minOccurs="0" maxOccurs="unbounded" name="WersjaJezykowa"
+						type="tns:WersjaJezykowaTyp" />
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="WersjaJezykowaTyp">
+				<xs:sequence>
+					<xs:element minOccurs="0" maxOccurs="1" name="Kod" type="xs:string" />
+					<xs:element minOccurs="0" maxOccurs="1" name="Nazwa"
+						type="xs:string" />
+					<xs:element minOccurs="1" maxOccurs="1" name="NazwaGUID"
+						type="q10:guid" xmlns:q10="http://microsoft.com/wsdl/types/" />
+				</xs:sequence>
+			</xs:complexType>
+			<xs:element name="PDPServiceFault" nillable="true"
+				type="tns:PDPServiceFault" />
+			<xs:complexType name="PDPServiceFault">
+				<xs:sequence>
+					<xs:element minOccurs="0" maxOccurs="1" name="Details"
+						type="tns:ArrayOfPDPServiceFaultDetail" />
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="ArrayOfPDPServiceFaultDetail">
+				<xs:sequence>
+					<xs:element minOccurs="0" maxOccurs="unbounded"
+						name="PDPServiceFaultDetail" nillable="true" type="tns:PDPServiceFaultDetail" />
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="PDPServiceFaultDetail">
+				<xs:sequence>
+					<xs:element minOccurs="0" maxOccurs="1" name="Code"
+						type="xs:string" />
+					<xs:element minOccurs="1" maxOccurs="1" name="Type"
+						type="tns:PDPServiceFaultDetailType" />
+					<xs:element minOccurs="0" maxOccurs="1" name="Message"
+						type="xs:string" />
+				</xs:sequence>
+			</xs:complexType>
+			<xs:simpleType name="PDPServiceFaultDetailType">
+				<xs:restriction base="xs:string">
+					<xs:enumeration value="Info" />
+					<xs:enumeration value="Warning" />
+					<xs:enumeration value="Error" />
+				</xs:restriction>
+			</xs:simpleType>
+			<xs:element name="PobierzRozkladPlanowyTygodniowyDlaWszystkichStacji">
+				<xs:complexType />
+			</xs:element>
+			<xs:element
+				name="PobierzRozkladPlanowyTygodniowyDlaWszystkichStacjiResponse">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element minOccurs="0" maxOccurs="1"
+							name="PobierzRozkladPlanowyTygodniowyDlaWszystkichStacjiResult">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element minOccurs="0" maxOccurs="1" name="RozkladPlanowy"
+										type="tns:RozkladPlanowyTyp" />
+									<xs:element minOccurs="0" maxOccurs="1" name="Utrudnienia"
+										type="tns:ArrayOfUtrudnienieTyp" />
+									<xs:element minOccurs="0" maxOccurs="1" name="Stacje"
+										type="tns:ArrayOfStacjaTyp" />
+									<xs:element minOccurs="0" maxOccurs="1" name="Tlumaczenia"
+										type="tns:ArrayOfTlumaczenieTyp" />
+									<xs:element minOccurs="0" maxOccurs="1" name="Uslugi"
+										type="tns:ArrayOfUslugaTyp" />
+									<xs:element minOccurs="0" maxOccurs="1" name="RodzajeWagonow"
+										type="tns:ArrayOfRodzajWagonuTyp" />
+									<xs:element minOccurs="0" maxOccurs="1"
+										name="RodzajePowiazan" type="tns:ArrayOfRodzajPowiazaniaTyp" />
+									<xs:element minOccurs="0" maxOccurs="1" name="Przewoznicy"
+										type="tns:ArrayOfPrzewoznikTyp" />
+									<xs:element minOccurs="0" maxOccurs="1"
+										name="KategorieHandlowe" type="tns:ArrayOfKategoriaHandlowaTyp" />
+									<xs:element minOccurs="0" maxOccurs="1" name="WersjeJezykowe"
+										type="tns:ArrayOfWersjaJezykowaTyp" />
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="PobierzRozkladPlanowyTygodniowyDlaStacji">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element minOccurs="1" maxOccurs="1" name="idStacji"
+							type="xs:int" />
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="PobierzRozkladPlanowyTygodniowyDlaStacjiResponse">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element minOccurs="0" maxOccurs="1"
+							name="PobierzRozkladPlanowyTygodniowyDlaStacjiResult">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element minOccurs="0" maxOccurs="1" name="RozkladPlanowy"
+										type="tns:RozkladPlanowyTyp" />
+									<xs:element minOccurs="0" maxOccurs="1" name="Utrudnienia"
+										type="tns:ArrayOfUtrudnienieTyp" />
+									<xs:element minOccurs="0" maxOccurs="1" name="Stacje"
+										type="tns:ArrayOfStacjaTyp" />
+									<xs:element minOccurs="0" maxOccurs="1" name="Tlumaczenia"
+										type="tns:ArrayOfTlumaczenieTyp" />
+									<xs:element minOccurs="0" maxOccurs="1" name="Uslugi"
+										type="tns:ArrayOfUslugaTyp" />
+									<xs:element minOccurs="0" maxOccurs="1" name="RodzajeWagonow"
+										type="tns:ArrayOfRodzajWagonuTyp" />
+									<xs:element minOccurs="0" maxOccurs="1"
+										name="RodzajePowiazan" type="tns:ArrayOfRodzajPowiazaniaTyp" />
+									<xs:element minOccurs="0" maxOccurs="1" name="Przewoznicy"
+										type="tns:ArrayOfPrzewoznikTyp" />
+									<xs:element minOccurs="0" maxOccurs="1"
+										name="KategorieHandlowe" type="tns:ArrayOfKategoriaHandlowaTyp" />
+									<xs:element minOccurs="0" maxOccurs="1" name="WersjeJezykowe"
+										type="tns:ArrayOfWersjaJezykowaTyp" />
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="PobierzRozkladPlanowyTygodniowyDlaListyStacji">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element minOccurs="0" maxOccurs="1" name="listaStacji"
+							type="tns:ArrayOfInt" />
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:complexType name="ArrayOfInt">
+				<xs:sequence>
+					<xs:element minOccurs="0" maxOccurs="unbounded" name="int"
+						type="xs:int" />
+				</xs:sequence>
+			</xs:complexType>
+			<xs:element name="PobierzRozkladPlanowyTygodniowyDlaListyStacjiResponse">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element minOccurs="0" maxOccurs="1"
+							name="PobierzRozkladPlanowyTygodniowyDlaListyStacjiResult">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element minOccurs="0" maxOccurs="1" name="RozkladPlanowy"
+										type="tns:RozkladPlanowyTyp" />
+									<xs:element minOccurs="0" maxOccurs="1" name="Utrudnienia"
+										type="tns:ArrayOfUtrudnienieTyp" />
+									<xs:element minOccurs="0" maxOccurs="1" name="Stacje"
+										type="tns:ArrayOfStacjaTyp" />
+									<xs:element minOccurs="0" maxOccurs="1" name="Tlumaczenia"
+										type="tns:ArrayOfTlumaczenieTyp" />
+									<xs:element minOccurs="0" maxOccurs="1" name="Uslugi"
+										type="tns:ArrayOfUslugaTyp" />
+									<xs:element minOccurs="0" maxOccurs="1" name="RodzajeWagonow"
+										type="tns:ArrayOfRodzajWagonuTyp" />
+									<xs:element minOccurs="0" maxOccurs="1"
+										name="RodzajePowiazan" type="tns:ArrayOfRodzajPowiazaniaTyp" />
+									<xs:element minOccurs="0" maxOccurs="1" name="Przewoznicy"
+										type="tns:ArrayOfPrzewoznikTyp" />
+									<xs:element minOccurs="0" maxOccurs="1"
+										name="KategorieHandlowe" type="tns:ArrayOfKategoriaHandlowaTyp" />
+									<xs:element minOccurs="0" maxOccurs="1" name="WersjeJezykowe"
+										type="tns:ArrayOfWersjaJezykowaTyp" />
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="PobierzRozkladRzeczywistyDlaWszystkichStacji">
+				<xs:complexType />
+			</xs:element>
+			<xs:element name="PobierzRozkladRzeczywistyDlaWszystkichStacjiResponse">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element minOccurs="0" maxOccurs="1"
+							name="PobierzRozkladRzeczywistyDlaWszystkichStacjiResult">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element minOccurs="0" maxOccurs="1"
+										name="RozkladRzeczywisty" type="tns:RozkladRzeczywistyTyp" />
+									<xs:element minOccurs="0" maxOccurs="1" name="Stacje"
+										type="tns:ArrayOfStacjaTyp" />
+									<xs:element minOccurs="0" maxOccurs="1" name="Tlumaczenia"
+										type="tns:ArrayOfTlumaczenieTyp" />
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:complexType name="RozkladRzeczywistyTyp">
+				<xs:sequence>
+					<xs:element minOccurs="1" maxOccurs="1" name="CzasGeneracji"
+						type="xs:dateTime" />
+					<xs:element minOccurs="0" maxOccurs="1" name="Trasy"
+						type="tns:ArrayOfTrasaWykonanaTyp" />
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="ArrayOfTrasaWykonanaTyp">
+				<xs:sequence>
+					<xs:element minOccurs="0" maxOccurs="unbounded" name="Trasa"
+						type="tns:TrasaWykonanaTyp" />
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="TrasaWykonanaTyp">
+				<xs:sequence>
+					<xs:element minOccurs="1" maxOccurs="1" name="RozkladID"
+						type="xs:short" />
+					<xs:element minOccurs="1" maxOccurs="1" name="ZamowienieSKRJID"
+						type="xs:int" />
+					<xs:element minOccurs="1" maxOccurs="1" name="DataKursowania"
+						type="xs:date" />
+					<xs:element minOccurs="0" maxOccurs="1" name="StacjeWykonane"
+						type="tns:ArrayOfStacjaWykonanaTyp" />
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="ArrayOfStacjaWykonanaTyp">
+				<xs:sequence>
+					<xs:element minOccurs="0" maxOccurs="unbounded" name="StacjaWykonana"
+						type="tns:StacjaWykonanaTyp" />
+				</xs:sequence>
+			</xs:complexType>
+			<xs:complexType name="StacjaWykonanaTyp">
+				<xs:sequence>
+					<xs:element minOccurs="1" maxOccurs="1" name="StacjaID"
+						type="xs:int" />
+					<xs:element minOccurs="1" maxOccurs="1" name="NumerNaTrasie"
+						type="xs:short" />
+					<xs:element minOccurs="0" maxOccurs="1" name="Przyjazd"
+						nillable="true" type="xs:dateTime" />
+					<xs:element minOccurs="0" maxOccurs="1" name="Odjazd"
+						nillable="true" type="xs:dateTime" />
+					<xs:element minOccurs="1" maxOccurs="1" name="Zatwierdzenie"
+						type="xs:boolean" />
+					<xs:element minOccurs="1" maxOccurs="1" name="Odwolanie"
+						type="xs:boolean" />
+				</xs:sequence>
+			</xs:complexType>
+			<xs:element name="PobierzRozkladRzeczywistyDlaStacji">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element minOccurs="1" maxOccurs="1" name="idStacji"
+							type="xs:int" />
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="PobierzRozkladRzeczywistyDlaStacjiResponse">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element minOccurs="0" maxOccurs="1"
+							name="PobierzRozkladRzeczywistyDlaStacjiResult">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element minOccurs="0" maxOccurs="1"
+										name="RozkladRzeczywisty" type="tns:RozkladRzeczywistyTyp" />
+									<xs:element minOccurs="0" maxOccurs="1" name="Stacje"
+										type="tns:ArrayOfStacjaTyp" />
+									<xs:element minOccurs="0" maxOccurs="1" name="Tlumaczenia"
+										type="tns:ArrayOfTlumaczenieTyp" />
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="PobierzRozkladRzeczywistyDlaListyStacji">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element minOccurs="0" maxOccurs="1" name="listaStacji"
+							type="tns:ArrayOfInt" />
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+			<xs:element name="PobierzRozkladRzeczywistyDlaListyStacjiResponse">
+				<xs:complexType>
+					<xs:sequence>
+						<xs:element minOccurs="0" maxOccurs="1"
+							name="PobierzRozkladRzeczywistyDlaListyStacjiResult">
+							<xs:complexType>
+								<xs:sequence>
+									<xs:element minOccurs="0" maxOccurs="1"
+										name="RozkladRzeczywisty" type="tns:RozkladRzeczywistyTyp" />
+									<xs:element minOccurs="0" maxOccurs="1" name="Stacje"
+										type="tns:ArrayOfStacjaTyp" />
+									<xs:element minOccurs="0" maxOccurs="1" name="Tlumaczenia"
+										type="tns:ArrayOfTlumaczenieTyp" />
+								</xs:sequence>
+							</xs:complexType>
+						</xs:element>
+					</xs:sequence>
+				</xs:complexType>
+			</xs:element>
+		</xs:schema>
+		<xs:schema elementFormDefault="qualified"
+			targetNamespace="http://microsoft.com/wsdl/types/" xmlns:xs="http://www.w3.org/2001/XMLSchema"
+			xmlns:tns="http://microsoft.com/wsdl/types/">
+			<xs:simpleType name="guid">
+				<xs:restriction base="xs:string">
+					<xs:pattern
+						value="[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}" />
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:schema>
+	</wsdl:types>
+	<wsdl:message
+		name="IRozkladJazdy_PobierzRozkladPlanowyNastepneZamkniecieDlaWszystkichStacji_InputMessage">
+		<wsdl:part name="parameters"
+			element="tns:PobierzRozkladPlanowyNastepneZamkniecieDlaWszystkichStacji" />
+	</wsdl:message>
+	<wsdl:message
+		name="IRozkladJazdy_PobierzRozkladPlanowyNastepneZamkniecieDlaWszystkichStacji_OutputMessage">
+		<wsdl:part name="parameters"
+			element="tns:PobierzRozkladPlanowyNastepneZamkniecieDlaWszystkichStacjiResponse" />
+	</wsdl:message>
+	<wsdl:message
+		name="IRozkladJazdy_PobierzRozkladPlanowyNastepneZamkniecieDlaWszystkichStacji_PDPServiceFaultFault_FaultMessage">
+		<wsdl:part name="detail" element="tns:PDPServiceFault" />
+	</wsdl:message>
+	<wsdl:message
+		name="IRozkladJazdy_PobierzRozkladPlanowyTygodniowyDlaWszystkichStacji_InputMessage">
+		<wsdl:part name="parameters"
+			element="tns:PobierzRozkladPlanowyTygodniowyDlaWszystkichStacji" />
+	</wsdl:message>
+	<wsdl:message
+		name="IRozkladJazdy_PobierzRozkladPlanowyTygodniowyDlaWszystkichStacji_OutputMessage">
+		<wsdl:part name="parameters"
+			element="tns:PobierzRozkladPlanowyTygodniowyDlaWszystkichStacjiResponse" />
+	</wsdl:message>
+	<wsdl:message
+		name="IRozkladJazdy_PobierzRozkladPlanowyTygodniowyDlaWszystkichStacji_PDPServiceFaultFault_FaultMessage">
+		<wsdl:part name="detail" element="tns:PDPServiceFault" />
+	</wsdl:message>
+	<wsdl:message
+		name="IRozkladJazdy_PobierzRozkladPlanowyTygodniowyDlaStacji_InputMessage">
+		<wsdl:part name="parameters"
+			element="tns:PobierzRozkladPlanowyTygodniowyDlaStacji" />
+	</wsdl:message>
+	<wsdl:message
+		name="IRozkladJazdy_PobierzRozkladPlanowyTygodniowyDlaStacji_OutputMessage">
+		<wsdl:part name="parameters"
+			element="tns:PobierzRozkladPlanowyTygodniowyDlaStacjiResponse" />
+	</wsdl:message>
+	<wsdl:message
+		name="IRozkladJazdy_PobierzRozkladPlanowyTygodniowyDlaStacji_PDPServiceFaultFault_FaultMessage">
+		<wsdl:part name="detail" element="tns:PDPServiceFault" />
+	</wsdl:message>
+	<wsdl:message
+		name="IRozkladJazdy_PobierzRozkladPlanowyTygodniowyDlaListyStacji_InputMessage">
+		<wsdl:part name="parameters"
+			element="tns:PobierzRozkladPlanowyTygodniowyDlaListyStacji" />
+	</wsdl:message>
+	<wsdl:message
+		name="IRozkladJazdy_PobierzRozkladPlanowyTygodniowyDlaListyStacji_OutputMessage">
+		<wsdl:part name="parameters"
+			element="tns:PobierzRozkladPlanowyTygodniowyDlaListyStacjiResponse" />
+	</wsdl:message>
+	<wsdl:message
+		name="IRozkladJazdy_PobierzRozkladPlanowyTygodniowyDlaListyStacji_PDPServiceFaultFault_FaultMessage">
+		<wsdl:part name="detail" element="tns:PDPServiceFault" />
+	</wsdl:message>
+	<wsdl:message
+		name="IRozkladJazdy_PobierzRozkladRzeczywistyDlaWszystkichStacji_InputMessage">
+		<wsdl:part name="parameters"
+			element="tns:PobierzRozkladRzeczywistyDlaWszystkichStacji" />
+	</wsdl:message>
+	<wsdl:message
+		name="IRozkladJazdy_PobierzRozkladRzeczywistyDlaWszystkichStacji_OutputMessage">
+		<wsdl:part name="parameters"
+			element="tns:PobierzRozkladRzeczywistyDlaWszystkichStacjiResponse" />
+	</wsdl:message>
+	<wsdl:message
+		name="IRozkladJazdy_PobierzRozkladRzeczywistyDlaWszystkichStacji_PDPServiceFaultFault_FaultMessage">
+		<wsdl:part name="detail" element="tns:PDPServiceFault" />
+	</wsdl:message>
+	<wsdl:message
+		name="IRozkladJazdy_PobierzRozkladRzeczywistyDlaStacji_InputMessage">
+		<wsdl:part name="parameters" element="tns:PobierzRozkladRzeczywistyDlaStacji" />
+	</wsdl:message>
+	<wsdl:message
+		name="IRozkladJazdy_PobierzRozkladRzeczywistyDlaStacji_OutputMessage">
+		<wsdl:part name="parameters"
+			element="tns:PobierzRozkladRzeczywistyDlaStacjiResponse" />
+	</wsdl:message>
+	<wsdl:message
+		name="IRozkladJazdy_PobierzRozkladRzeczywistyDlaStacji_PDPServiceFaultFault_FaultMessage">
+		<wsdl:part name="detail" element="tns:PDPServiceFault" />
+	</wsdl:message>
+	<wsdl:message
+		name="IRozkladJazdy_PobierzRozkladRzeczywistyDlaListyStacji_InputMessage">
+		<wsdl:part name="parameters"
+			element="tns:PobierzRozkladRzeczywistyDlaListyStacji" />
+	</wsdl:message>
+	<wsdl:message
+		name="IRozkladJazdy_PobierzRozkladRzeczywistyDlaListyStacji_OutputMessage">
+		<wsdl:part name="parameters"
+			element="tns:PobierzRozkladRzeczywistyDlaListyStacjiResponse" />
+	</wsdl:message>
+	<wsdl:message
+		name="IRozkladJazdy_PobierzRozkladRzeczywistyDlaListyStacji_PDPServiceFaultFault_FaultMessage">
+		<wsdl:part name="detail" element="tns:PDPServiceFault" />
+	</wsdl:message>
+	<wsdl:portType name="IRozkladJazdy">
+		<wsdl:operation
+			name="PobierzRozkladPlanowyNastepneZamkniecieDlaWszystkichStacji">
+			<wsdl:input
+				wsaw:Action="http://sdip.plk-sa.pl/v1.1/IRozkladJazdy/PobierzRozkladPlanowyNastepneZamkniecieDlaWszystkichStacji"
+				message="tns:IRozkladJazdy_PobierzRozkladPlanowyNastepneZamkniecieDlaWszystkichStacji_InputMessage" />
+			<wsdl:output
+				wsaw:Action="http://sdip.plk-sa.pl/v1.1/IRozkladJazdy/PobierzRozkladPlanowyNastepneZamkniecieDlaWszystkichStacjiResponse"
+				message="tns:IRozkladJazdy_PobierzRozkladPlanowyNastepneZamkniecieDlaWszystkichStacji_OutputMessage" />
+			<wsdl:fault
+				wsaw:Action="http://sdip.plk-sa.pl/v1.1/IRozkladJazdy/PobierzRozkladPlanowyNastepneZamkniecieDlaWszystkichStacjiPDPServiceFaultFault"
+				name="PDPServiceFaultFault"
+				message="tns:IRozkladJazdy_PobierzRozkladPlanowyNastepneZamkniecieDlaWszystkichStacji_PDPServiceFaultFault_FaultMessage" />
+		</wsdl:operation>
+		<wsdl:operation name="PobierzRozkladPlanowyTygodniowyDlaWszystkichStacji">
+			<wsdl:input
+				wsaw:Action="http://sdip.plk-sa.pl/v1.1/IRozkladJazdy/PobierzRozkladPlanowyTygodniowyDlaWszystkichStacji"
+				message="tns:IRozkladJazdy_PobierzRozkladPlanowyTygodniowyDlaWszystkichStacji_InputMessage" />
+			<wsdl:output
+				wsaw:Action="http://sdip.plk-sa.pl/v1.1/IRozkladJazdy/PobierzRozkladPlanowyTygodniowyDlaWszystkichStacjiResponse"
+				message="tns:IRozkladJazdy_PobierzRozkladPlanowyTygodniowyDlaWszystkichStacji_OutputMessage" />
+			<wsdl:fault
+				wsaw:Action="http://sdip.plk-sa.pl/v1.1/IRozkladJazdy/PobierzRozkladPlanowyTygodniowyDlaWszystkichStacjiPDPServiceFaultFault"
+				name="PDPServiceFaultFault"
+				message="tns:IRozkladJazdy_PobierzRozkladPlanowyTygodniowyDlaWszystkichStacji_PDPServiceFaultFault_FaultMessage" />
+		</wsdl:operation>
+		<wsdl:operation name="PobierzRozkladPlanowyTygodniowyDlaStacji">
+			<wsdl:input
+				wsaw:Action="http://sdip.plk-sa.pl/v1.1/IRozkladJazdy/PobierzRozkladPlanowyTygodniowyDlaStacji"
+				message="tns:IRozkladJazdy_PobierzRozkladPlanowyTygodniowyDlaStacji_InputMessage" />
+			<wsdl:output
+				wsaw:Action="http://sdip.plk-sa.pl/v1.1/IRozkladJazdy/PobierzRozkladPlanowyTygodniowyDlaStacjiResponse"
+				message="tns:IRozkladJazdy_PobierzRozkladPlanowyTygodniowyDlaStacji_OutputMessage" />
+			<wsdl:fault
+				wsaw:Action="http://sdip.plk-sa.pl/v1.1/IRozkladJazdy/PobierzRozkladPlanowyTygodniowyDlaStacjiPDPServiceFaultFault"
+				name="PDPServiceFaultFault"
+				message="tns:IRozkladJazdy_PobierzRozkladPlanowyTygodniowyDlaStacji_PDPServiceFaultFault_FaultMessage" />
+		</wsdl:operation>
+		<wsdl:operation name="PobierzRozkladPlanowyTygodniowyDlaListyStacji">
+			<wsdl:input
+				wsaw:Action="http://sdip.plk-sa.pl/v1.1/IRozkladJazdy/PobierzRozkladPlanowyTygodniowyDlaListyStacji"
+				message="tns:IRozkladJazdy_PobierzRozkladPlanowyTygodniowyDlaListyStacji_InputMessage" />
+			<wsdl:output
+				wsaw:Action="http://sdip.plk-sa.pl/v1.1/IRozkladJazdy/PobierzRozkladPlanowyTygodniowyDlaListyStacjiResponse"
+				message="tns:IRozkladJazdy_PobierzRozkladPlanowyTygodniowyDlaListyStacji_OutputMessage" />
+			<wsdl:fault
+				wsaw:Action="http://sdip.plk-sa.pl/v1.1/IRozkladJazdy/PobierzRozkladPlanowyTygodniowyDlaListyStacjiPDPServiceFaultFault"
+				name="PDPServiceFaultFault"
+				message="tns:IRozkladJazdy_PobierzRozkladPlanowyTygodniowyDlaListyStacji_PDPServiceFaultFault_FaultMessage" />
+		</wsdl:operation>
+		<wsdl:operation name="PobierzRozkladRzeczywistyDlaWszystkichStacji">
+			<wsdl:input
+				wsaw:Action="http://sdip.plk-sa.pl/v1.1/IRozkladJazdy/PobierzRozkladRzeczywistyDlaWszystkichStacji"
+				message="tns:IRozkladJazdy_PobierzRozkladRzeczywistyDlaWszystkichStacji_InputMessage" />
+			<wsdl:output
+				wsaw:Action="http://sdip.plk-sa.pl/v1.1/IRozkladJazdy/PobierzRozkladRzeczywistyDlaWszystkichStacjiResponse"
+				message="tns:IRozkladJazdy_PobierzRozkladRzeczywistyDlaWszystkichStacji_OutputMessage" />
+			<wsdl:fault
+				wsaw:Action="http://sdip.plk-sa.pl/v1.1/IRozkladJazdy/PobierzRozkladRzeczywistyDlaWszystkichStacjiPDPServiceFaultFault"
+				name="PDPServiceFaultFault"
+				message="tns:IRozkladJazdy_PobierzRozkladRzeczywistyDlaWszystkichStacji_PDPServiceFaultFault_FaultMessage" />
+		</wsdl:operation>
+		<wsdl:operation name="PobierzRozkladRzeczywistyDlaStacji">
+			<wsdl:input
+				wsaw:Action="http://sdip.plk-sa.pl/v1.1/IRozkladJazdy/PobierzRozkladRzeczywistyDlaStacji"
+				message="tns:IRozkladJazdy_PobierzRozkladRzeczywistyDlaStacji_InputMessage" />
+			<wsdl:output
+				wsaw:Action="http://sdip.plk-sa.pl/v1.1/IRozkladJazdy/PobierzRozkladRzeczywistyDlaStacjiResponse"
+				message="tns:IRozkladJazdy_PobierzRozkladRzeczywistyDlaStacji_OutputMessage" />
+			<wsdl:fault
+				wsaw:Action="http://sdip.plk-sa.pl/v1.1/IRozkladJazdy/PobierzRozkladRzeczywistyDlaStacjiPDPServiceFaultFault"
+				name="PDPServiceFaultFault"
+				message="tns:IRozkladJazdy_PobierzRozkladRzeczywistyDlaStacji_PDPServiceFaultFault_FaultMessage" />
+		</wsdl:operation>
+		<wsdl:operation name="PobierzRozkladRzeczywistyDlaListyStacji">
+			<wsdl:input
+				wsaw:Action="http://sdip.plk-sa.pl/v1.1/IRozkladJazdy/PobierzRozkladRzeczywistyDlaListyStacji"
+				message="tns:IRozkladJazdy_PobierzRozkladRzeczywistyDlaListyStacji_InputMessage" />
+			<wsdl:output
+				wsaw:Action="http://sdip.plk-sa.pl/v1.1/IRozkladJazdy/PobierzRozkladRzeczywistyDlaListyStacjiResponse"
+				message="tns:IRozkladJazdy_PobierzRozkladRzeczywistyDlaListyStacji_OutputMessage" />
+			<wsdl:fault
+				wsaw:Action="http://sdip.plk-sa.pl/v1.1/IRozkladJazdy/PobierzRozkladRzeczywistyDlaListyStacjiPDPServiceFaultFault"
+				name="PDPServiceFaultFault"
+				message="tns:IRozkladJazdy_PobierzRozkladRzeczywistyDlaListyStacji_PDPServiceFaultFault_FaultMessage" />
+		</wsdl:operation>
+	</wsdl:portType>
+	<wsdl:binding name="BasicHttpBinding_IRozkladJazdy" type="tns:IRozkladJazdy">
+		<wsp:PolicyReference URI="#BasicHttpBinding_IRozkladJazdy_policy" />
+		<soap:binding transport="http://schemas.xmlsoap.org/soap/http" />
+		<wsdl:operation
+			name="PobierzRozkladPlanowyNastepneZamkniecieDlaWszystkichStacji">
+			<soap:operation
+				soapAction="http://sdip.plk-sa.pl/v1.1/IRozkladJazdy/PobierzRozkladPlanowyNastepneZamkniecieDlaWszystkichStacji"
+				style="document" />
+			<wsdl:input>
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+			<wsdl:fault name="PDPServiceFaultFault">
+				<soap:fault use="literal" name="PDPServiceFaultFault"
+					namespace="" />
+			</wsdl:fault>
+		</wsdl:operation>
+		<wsdl:operation name="PobierzRozkladPlanowyTygodniowyDlaWszystkichStacji">
+			<soap:operation
+				soapAction="http://sdip.plk-sa.pl/v1.1/IRozkladJazdy/PobierzRozkladPlanowyTygodniowyDlaWszystkichStacji"
+				style="document" />
+			<wsdl:input>
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+			<wsdl:fault name="PDPServiceFaultFault">
+				<soap:fault use="literal" name="PDPServiceFaultFault"
+					namespace="" />
+			</wsdl:fault>
+		</wsdl:operation>
+		<wsdl:operation name="PobierzRozkladPlanowyTygodniowyDlaStacji">
+			<soap:operation
+				soapAction="http://sdip.plk-sa.pl/v1.1/IRozkladJazdy/PobierzRozkladPlanowyTygodniowyDlaStacji"
+				style="document" />
+			<wsdl:input>
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+			<wsdl:fault name="PDPServiceFaultFault">
+				<soap:fault use="literal" name="PDPServiceFaultFault"
+					namespace="" />
+			</wsdl:fault>
+		</wsdl:operation>
+		<wsdl:operation name="PobierzRozkladPlanowyTygodniowyDlaListyStacji">
+			<soap:operation
+				soapAction="http://sdip.plk-sa.pl/v1.1/IRozkladJazdy/PobierzRozkladPlanowyTygodniowyDlaListyStacji"
+				style="document" />
+			<wsdl:input>
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+			<wsdl:fault name="PDPServiceFaultFault">
+				<soap:fault use="literal" name="PDPServiceFaultFault"
+					namespace="" />
+			</wsdl:fault>
+		</wsdl:operation>
+		<wsdl:operation name="PobierzRozkladRzeczywistyDlaWszystkichStacji">
+			<soap:operation
+				soapAction="http://sdip.plk-sa.pl/v1.1/IRozkladJazdy/PobierzRozkladRzeczywistyDlaWszystkichStacji"
+				style="document" />
+			<wsdl:input>
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+			<wsdl:fault name="PDPServiceFaultFault">
+				<soap:fault use="literal" name="PDPServiceFaultFault"
+					namespace="" />
+			</wsdl:fault>
+		</wsdl:operation>
+		<wsdl:operation name="PobierzRozkladRzeczywistyDlaStacji">
+			<soap:operation
+				soapAction="http://sdip.plk-sa.pl/v1.1/IRozkladJazdy/PobierzRozkladRzeczywistyDlaStacji"
+				style="document" />
+			<wsdl:input>
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+			<wsdl:fault name="PDPServiceFaultFault">
+				<soap:fault use="literal" name="PDPServiceFaultFault"
+					namespace="" />
+			</wsdl:fault>
+		</wsdl:operation>
+		<wsdl:operation name="PobierzRozkladRzeczywistyDlaListyStacji">
+			<soap:operation
+				soapAction="http://sdip.plk-sa.pl/v1.1/IRozkladJazdy/PobierzRozkladRzeczywistyDlaListyStacji"
+				style="document" />
+			<wsdl:input>
+				<soap:body use="literal" />
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal" />
+			</wsdl:output>
+			<wsdl:fault name="PDPServiceFaultFault">
+				<soap:fault use="literal" name="PDPServiceFaultFault"
+					namespace="" />
+			</wsdl:fault>
+		</wsdl:operation>
+	</wsdl:binding>
+	<wsdl:service name="RozkladJazdy">
+		<wsdl:port name="BasicHttpBinding_IRozkladJazdy" binding="tns:BasicHttpBinding_IRozkladJazdy">
+			<soap:address location="https://sdip.plk-sa.pl/v1.1/RozkladJazdy.svc" />
+		</wsdl:port>
+	</wsdl:service>
+</wsdl:definitions>

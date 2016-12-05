@@ -1,0 +1,444 @@
+-
+  id: "ochrona"
+  type: "info"
+  lang: pl
+  categories:
+    - Informacyjne
+  translations:
+    en: luggage_eng
+  title: "Prośba o powiadomienie ochrony w razie niebezpieczeństwa"
+  description: "W trosce o swoje bezpieczeństwo, jeśli jesteś świadkiem podejrzanego zachowania lub widzisz porzucony bagaż, powiadom ochronę dworca lub Straż Ochrony Kolei – telefon 22 474 00 00. Bagaż pozostawiony bez opieki zostanie usunięty i może być zniszczony na koszt właściciela."
+  templates:
+    human: >-
+        W trosce o swoje bezpieczeństwo, jeśli jesteś świadkiem podejrzanego zachowania
+        lub widzisz porzucony bagaż, powiadom ochronę dworca lub Straż Ochrony Kolei –
+        telefon 22 474 00 00. Bagaż pozostawiony bez opieki zostanie usunięty i może być
+        zniszczony na koszt właściciela.
+    tts: >-
+        <s xml:lang="pl">W trosce o swoje bezpieczeństwo, jeśli jesteś świadkiem podejrzanego zachowania,
+        lub widzisz porzucony bagaż, powiadom <emphasis level="strong">ochronę dworca</emphasis> lub <emphasis level="strong">Straż Ochrony Kolei</emphasis>;
+        telefon: <say-as interpret-as="telephone">22 474 00 00</say-as>.
+        Bagaż pozostawiony bez opieki zostanie usunięty, i może być zniszczony na koszt właściciela.</s>
+    html: >-
+        W trosce o swoje bezpieczeństwo, jeśli jesteś świadkiem podejrzanego zachowania
+        lub widzisz porzucony bagaż, powiadom ochronę dworca lub Straż Ochrony Kolei –
+        telefon 22 474 00 00. Bagaż pozostawiony bez opieki zostanie usunięty i może być
+        zniszczony na koszt właściciela.
+-
+  id: "monitoring"
+  type: "info"
+  lang: pl
+  categories:
+    - Informacyjne
+  title: "Monitoring i patrolowanie dworca"
+  description: "Informujemy, że w trosce o Państwa bezpieczeństwo, teren dworca i peronów jest monitorowany i patrolowany przez funkcjonariuszy Policji, Straży Ochrony Kolei, i ochronę dworca."
+  templates:
+    human: >-
+        Informujemy, że w trosce o Państwa bezpieczeństwo,
+        teren dworca i peronów jest monitorowany i patrolowany
+        przez funkcjonariuszy Policji, Straży Ochrony Kolei i ochronę dworca.
+    tts: >-
+        <s xml:lang="pl">Informujemy, że w trosce o Państwa bezpieczeństwo,
+        teren dworca i peronów jest monitorowany i patrolowany
+        przez funkcjonariuszy Policji, Straży Ochrony Kolei i ochronę dworca.</s>
+    html: >-
+        Informujemy, że w trosce o Państwa bezpieczeństwo,
+        teren dworca i peronów jest monitorowany i patrolowany
+        przez funkcjonariuszy Policji, Straży Ochrony Kolei i ochronę dworca.
+-
+  id: "palenie"
+  type: "info"
+  lang: pl
+  categories:
+    - Informacyjne
+  translations:
+    en: smoking_en
+  title: "Zakaz palenia i spożywania alkoholu"
+  description: "Szanowni Państwo! Informujemy, że na terenie dworca obowiązuje całkowity zakaz palenia tytoniu i spożywania alkoholu."
+  templates:
+    human: >-
+        Szanowni Państwo! Informujemy, że na terenie dworca obowiązuje
+        całkowity zakaz palenia tytoniu i spożywania alkoholu.
+    tts: >-
+        <s xml:lang="pl">Szanowni Państwo! Informujemy, że na terenie dworca obowiązuje
+        całkowity zakaz palenia tytoniu i spożywania alkoholu.</s>
+    html: >-
+        Szanowni Państwo! Informujemy, że na terenie dworca obowiązuje
+        całkowity zakaz palenia tytoniu i spożywania alkoholu.
+-
+  id: "freehand"
+  type: "info"
+  lang: pl
+  categories:
+    - Informacyjne
+  title: "Dowolny komunikat"
+  description: "[Treść komunikatu podana przez operatora]"
+  templates:
+    human: "{{.Custom}}"
+    tts: >-
+      <s xml:lang="pl">{{.Custom}}</s>
+    html: "{{.Custom}}"
+-
+  id: "setup"
+  type: "setup"
+  lang: pl
+  categories:
+    - Pociągi
+  translations:
+    en: setup_en
+  title: "Podstawienie pociągu"
+  description: >+
+    Pociąg [kategoria] [przewoźnik] [nazwa] do stacji [stacja końcowa]
+    przez stacje: [stacje pośrednie] stoi na torze [tor]
+    przy peronie [peron]. [komunikaty dodatkowe].
+    Planowy odjazd pociągu o godzinie [godzina odjazdu].
+  templates:
+    human: >-
+      Pociąg {{with .Category}}{{.}} {{end}}
+      {{- with .Carrier}}{{.}} {{end}}
+      {{- with .Name}}{{.}} {{end}}do stacji {{.To}},
+      {{- with .By}} przez stacje: {{.}},{{end -}}
+      {{- /**/}} stoi na torze {{.TrackTxt}} przy peronie {{.Platform -}}. {{/**/ -}}
+      Pociąg {{with .Category}}{{.}} {{end}}{{with .Carrier}}{{.}} {{end}}
+      {{- with .Name}}{{.}} {{end}}do stacji {{.To}},
+      {{- with .By}} przez stacje: {{.}},{{end -}}
+      {{- /**/}} stoi na torze {{.TrackTxt}} przy peronie {{.Platform -}}. {{/**/ -}}
+      Planowy odjazd pociągu o godzinie {{.Departure}}.
+    tts: >-
+      <s xml:lang="pl">Pociąg <emphasis level="strong">{{with .Category}}{{.}} {{end}}
+      {{- with .Carrier}}{{.}} {{end}}
+      {{- with .Name}}{{.}} {{end}}</emphasis> do stacji <emphasis level="strong">{{.To}}</emphasis>,
+      {{- with .By}} przez stacje: <emphasis level="strong">{{.}}</emphasis>,{{end -}}
+      {{- /**/}} stoi na torze {{.TrackTxt}} przy peronie {{.Platform -}}. {{/**/ -}}
+      Pociąg <emphasis level="strong">{{with .Category}}{{.}} {{end}}{{with .Carrier}}{{.}} {{end}}
+      {{- with .Name}}{{.}} {{end}}</emphasis> do stacji <emphasis level="strong">{{.To}}</emphasis>,
+      {{- with .By}} przez stacje: <emphasis level="strong">{{.}}</emphasis>,{{end -}}
+      {{- /**/}} stoi na torze {{.TrackTxt}} przy peronie {{.Platform -}}. {{/**/ -}}
+      Planowy odjazd pociągu o godzinie {{.Departure}}.</s>
+    html: >-
+      Pociąg {{with .Category}}<span class="tpl-param" data-name="category">{{.}}</span> {{end}}
+      {{- with .Carrier}}<span class="tpl-param" data-name="carrier">{{.}}</span> {{end}}
+      {{- with .Name}}<span class="tpl-param" data-name="name">{{.}}</span> {{end}}
+      {{- /* */}}do stacji <span class="tpl-param" data-name="category">{{.To}}</span>
+      {{- with .By}}, przez stacje: <span class="tpl-param" data-name="by">{{.}}</span>{{end -}}
+      {{- /* */}}, stoi na torze <span class="tpl-param" data-name="track">{{.TrackTxt}}</span>
+      {{- /* */}} przy peronie <span class="tpl-param" data-name="platform">{{.Platform}}</span>.
+      {{- /* */}} Pociąg {{with .Category}}<span class="tpl-param" data-name="category">{{.}}</span> {{end}}
+      {{- with .Carrier}}<span class="tpl-param" data-name="carrier">{{.}}</span> {{end}}
+      {{- with .Name}}<span class="tpl-param" data-name="name">{{.}}</span> {{end}}
+      {{- /* */}}do stacji <span class="tpl-param" data-name="category">{{.To}}</span>
+      {{- with .By}}, przez stacje: <span class="tpl-param" data-name="by">{{.}}</span>{{end}}
+      {{- /* */}}, stoi na torze <span class="tpl-param" data-name="track">{{.TrackTxt}}</span>
+      {{- /* */}} przy peronie <span class="tpl-param" data-name="platform">{{.Platform}}</span>.
+      {{- /* */}}<br/>Planowy odjazd pociągu o godzinie <span class="tpl-param" data-name="departure">{{.Departure}}</span>.
+-
+  id: "arrival"
+  type: "arrival"
+  lang: pl
+  categories:
+    - Pociągi
+  translations:
+    en: arrival_en
+  title: "Przyjazd pociągu"
+  description: >+
+    [Opóźniony] pociąg [kategoria] [przewoźnik] [nazwa] ze stacji [stacja początkowa]
+    do stacji [stacja końcowa] przez stacje: [stacje pośrednie] wjedzie na tor [tor]
+    przy peronie [peron]. [komunikaty dodatkowe]. Prosimy zachować ostrożność i nie
+    zbliżać się do krawędzi peronu. Planowy odjazd pociągu o godzinie [godzina odjazdu].
+  templates:
+    human: >-
+      {{- if .Delayed}}Opóźniony pociąg {{else}}Pociąg {{end}}
+      {{- .Category}}{{with .Carrier}} {{.}} {{end}}
+      {{- with .Name}} {{.}} {{end}}ze stacji {{.From}}
+      {{- if not .Last}} do stacji {{.To}}{{end}}
+      {{- with .By}} przez stacje: {{.}}{{end -}}
+      {{- /**/}} wjedzie na tor {{.TrackTxt}} przy peronie {{.Platform -}}
+      {{- if .Delayed}}. Opóźniony pociąg {{else}}. Pociąg {{end}}
+      {{- .Category}}{{with .Carrier}} {{.}} {{end}}
+      {{- with .Name}} {{.}} {{end}}ze stacji {{.From}}
+      {{- if not .Last}} do stacji {{.To}}{{end}}
+      {{- with .By}} przez stacje: {{.}}{{end -}}
+      {{- /**/}} wjedzie na tor {{.TrackTxt}} przy peronie {{.Platform -}}
+      . {{with .Resa}}Pociąg jest objęty obowiązkową rezerwacją miejsc. {{end -}}
+      {{with .Custom}}{{.}}{{end -}}
+      {{with .Kond}}Przesyłki konduktorskie przyjmuje i wydaje kierownik pociągu w wagonie numer {{.}}. {{end -}}
+      {{- if .Last}}Pociąg kończy bieg. {{end -}}
+      Prosimy zachować ostrożność i nie zbliżać się do krawędzi peronu.
+      {{- if not .Last}} Planowy odjazd pociągu o godzinie {{.Departure}}.{{end -}}
+    tts: >-
+      <s xml:lang="pl">{{if .Delayed}}Opóźniony pociąg {{else}}Pociąg {{end}}
+      <emphasis level="strong">{{- with .Category}}<say-as interpret-as="cardinal">{{.}}</say-as>{{end}}
+      {{- with .Carrier}} {{.}} {{end}}
+      {{- with .Name}} {{.}} {{end}}</emphasis> ze stacji <emphasis level="strong">{{.From}}</emphasis>,
+      {{- if not .Last}} do stacji <emphasis level="strong">{{.To}}</emphasis>,{{end}}
+      {{- with .By}} przez stacje: <emphasis level="strong">{{.}}</emphasis>,{{end -}}
+      {{- /**/}} wjedzie na tor {{.TrackTxt}} przy peronie {{.Platform -}}
+      {{- if .Delayed}}. Opóźniony pociąg {{else}}. Pociąg {{end}}
+      <emphasis level="strong">{{- with .Category}}<say-as interpret-as="cardinal">{{.}}</say-as>{{end}}
+      {{- with .Carrier}} {{.}} {{end}}
+      {{- with .Name}} {{.}} {{end}}</emphasis> ze stacji <emphasis level="strong">{{.From}}</emphasis>,
+      {{- if not .Last}} do stacji <emphasis level="strong">{{.To}}</emphasis>,{{end}}
+      {{- with .By}} przez stacje: <emphasis level="strong">{{.}}</emphasis>,{{end -}}
+      {{- /**/}} wjedzie na tor {{.TrackTxt}} przy peronie {{.Platform -}}
+      . {{with .Resa}}Pociąg jest objęty obowiązkową rezerwacją miejsc. {{end -}}
+      {{with .Custom}}{{.}}{{end -}}
+      {{with .Kond}}Przesyłki konduktorskie przyjmuje i wydaje kierownik pociągu w wagonie numer <say-as interpret-as="cardinal">{{.}}</say-as>. {{end -}}
+      {{- if .Last}}Pociąg kończy bieg. {{end -}}
+      Prosimy zachować ostrożność i nie zbliżać się do krawędzi peronu.
+      {{- if not .Last}} Planowy odjazd pociągu o godzinie {{.Departure}}.{{end}}</s>
+    html: >-
+      {{- if .Delayed}}Opóźniony pociąg {{else}}Pociąg {{end}}
+      {{- with .Category}}<span class="tpl-param" data-name="category">{{.}}</span>{{end}}
+      {{- with .Carrier}} <span class="tpl-param" data-name="carrier">{{.}}</span>{{end}}
+      {{- with .Name}} <span class="tpl-param" data-name="name">{{.}}</span>{{end}}
+      {{- /* */}} ze stacji <span class="tpl-param" data-name="from">{{.From}}</span>
+      {{- if not .Last}} do stacji <span class="tpl-param" data-name="category">{{.To}}</span>{{end -}}
+      {{- with .By}}, przez stacje: <span class="tpl-param" data-name="by">{{.}}</span>{{end -}}
+      {{- /* */}}, wjedzie na tor <span class="tpl-param" data-name="track">{{.TrackTxt}}</span>
+      {{- /* */}} przy peronie <span class="tpl-param" data-name="platform">{{.Platform}}</span>.
+      {{- if .Delayed}} Opóźniony pociąg {{else}} Pociąg {{end -}}
+      {{- with .Category}}<span class="tpl-param" data-name="category">{{.}}</span>{{end}}
+      {{- with .Carrier}} <span class="tpl-param" data-name="carrier">{{.}}</span>{{end}}
+      {{- with .Name}} <span class="tpl-param" data-name="name">{{.}}</span>{{end}}
+      {{- /* */}} ze stacji <span class="tpl-param" data-name="from">{{.From}}</span>
+      {{- if not .Last}} do stacji <span class="tpl-param" data-name="category">{{.To}}</span>{{end -}}
+      {{- with .By}}, przez stacje: <span class="tpl-param" data-name="by">{{.}}</span>{{end -}}
+      {{- /* */}}, wjedzie na tor <span class="tpl-param" data-name="track">{{.TrackTxt}}</span>
+      {{- /* */}} przy peronie <span class="tpl-param" data-name="platform">{{.Platform}}</span>.
+      {{- with .Resa}}<br/>Pociąg jest objęty obowiązkową rezerwacją miejsc.{{end}}
+      {{- with .Custom}}<br/>{{.}}{{end}}
+      {{- with .Kond}}<br/>Przesyłki konduktorskie przyjmuje i wydaje kierownik pociągu w wagonie numer {{.}}.{{end -}}
+      {{- if .Last}}<br/>Pociąg kończy bieg.{{end}}
+      {{- /* */}}<br/>Prosimy zachować ostrożność i nie zbliżać się do krawędzi peronu.
+      {{- if not .Last}}<br/>Planowy odjazd pociągu o godzinie <span class="tpl-param" data-name="departure">{{.Departure}}</span>.{{end}}
+-
+  id: "departure"
+  type: "departure"
+  lang: pl
+  categories:
+    - Pociągi
+  translations:
+    en: departure_en
+  title: "Odjazd pociągu"
+  description: >+
+    [Opóźniony] pociąg [kategoria] [przewoźnik] [nazwa] ze stacji [stacja początkowa]
+    do stacji [stacja końcowa] przez stacje: [stacje pośrednie] wjedzie na tor [tor]
+    przy peronie [peron]. [komunikaty dodatkowe]. Prosimy zachować ostrożność i nie
+    zbliżać się do krawędzi peronu. Planowy odjazd pociągu o godzinie [godzina odjazdu].
+  templates:
+    human: >-
+      {{- if .Delayed}}Opóźniony pociąg {{else}}Pociąg {{end}}
+      {{- .Category}}{{with .Carrier}} {{.}}{{end}}
+      {{- with .Name}} {{.}}{{end}} do stacji {{.To}}
+      {{- with .By}} przez stacje: {{.}}{{end -}}
+      {{- /**/}} odjedzie z toru {{.TrackTxt}} przy peronie {{.Platform -}}. {{/**/ -}}
+      {{- if .Delayed}}Opóźniony pociąg {{else}}Pociąg {{end}}
+      {{- .Category}}{{with .Carrier}} {{.}}{{end}}
+      {{- with .Name}} {{.}}{{end}} do stacji {{.To}}
+      {{- with .By}} przez stacje: {{.}}{{end -}}
+      {{- /**/}} odjedzie z toru {{.TrackTxt}} przy peronie {{.Platform}}. {{/**/ -}}
+      {{- with .Custom}}{{.}} {{end -}}
+      Prosimy zachować ostrożność i nie zbliżać się do krawędzi peronu.
+      {{- /**/}} Życzymy Państwu przyjemnej podróży.
+    tts: >-
+      <s xml:lang="pl">{{if .Delayed}}Opóźniony pociąg {{else}}Pociąg {{end -}}
+      <emphasis level="strong">{{.Category}}{{with .Carrier}} {{.}}{{end}}
+      {{- with .Name}} {{.}}{{end}}</emphasis> do stacji <emphasis level="strong">{{.To}}</emphasis>,
+      {{- with .By}} przez stacje: <emphasis level="strong">{{.}}</emphasis>,{{end -}}
+      {{- /**/}} odjedzie z toru {{.TrackTxt}} przy peronie {{.Platform -}}. {{/**/ -}}
+      {{- if .Delayed}}Opóźniony pociąg {{else}}Pociąg {{end -}}
+      <emphasis level="strong">{{.Category}}{{with .Carrier}} {{.}}{{end}}
+      {{- with .Name}} {{.}}{{end}}</emphasis> do stacji <emphasis level="strong">{{.To}}</emphasis>,
+      {{- with .By}} przez stacje: <emphasis level="strong">{{.}}</emphasis>,{{end -}}
+      {{- /**/}} odjedzie z toru {{.TrackTxt}} przy peronie {{.Platform}}. {{/**/ -}}
+      {{- with .Custom}}{{.}} {{end -}}
+      Prosimy zachować ostrożność i nie zbliżać się do krawędzi peronu.
+      {{- /**/}} Życzymy Państwu przyjemnej podróży.</s>
+    html: >-
+      {{- if .Delayed}}Opóźniony pociąg {{else}}Pociąg {{end}}
+      {{- with .Category}}<span class="tpl-param" data-name="category">{{.}}</span> {{end}}
+      {{- with .Carrier}}<span class="tpl-param" data-name="carrier">{{.}}</span> {{end}}
+      {{- with .Name}}<span class="tpl-param" data-name="name">{{.}}</span>{{end}}
+      {{- /* */}} do stacji <span class="tpl-param" data-name="category">{{.To}}</span>
+      {{- with .By}}, przez stacje: <span class="tpl-param" data-name="by">{{.}}</span>{{end -}}
+      {{- /* */}}, odjedzie z toru <span class="tpl-param" data-name="track">{{.TrackTxt}}</span>
+      {{- /* */}} przy peronie <span class="tpl-param" data-name="platform">{{.Platform}}</span>.
+      {{- if .Delayed}} Opóźniony pociąg {{else}} Pociąg {{end -}}
+      {{- with .Category}}<span class="tpl-param" data-name="category">{{.}}</span> {{end}}
+      {{- with .Carrier}}<span class="tpl-param" data-name="carrier">{{.}}</span> {{end}}
+      {{- with .Name}}<span class="tpl-param" data-name="name">{{.}}</span>{{end}}
+      {{- /* */}} do stacji <span class="tpl-param" data-name="category">{{.To}}</span>
+      {{- with .By}}, przez stacje: <span class="tpl-param" data-name="by">{{.}}</span>{{end -}}
+      {{- /* */}}, odjedzie z toru <span class="tpl-param" data-name="track">{{.TrackTxt}}</span>
+      {{- /* */}} przy peronie <span class="tpl-param" data-name="platform">{{.Platform}}</span>.
+      {{- with .Custom}}<br/>{{.}}{{end}}
+      {{- /* */}}<br/>Prosimy zachować ostrożność i nie zbliżać się do krawędzi peronu.
+      {{- /* */}}<br/>Życzymy Państwu przyjemnej podróży.
+-
+  id: "delay"
+  type: "delay"
+  lang: pl
+  categories:
+    - Pociągi
+  translations:
+    en: delay_en
+  title: "Opóźnienie pociągu"
+  description: >+
+    [Opóźniony] pociąg [kategoria] [przewoźnik] [nazwa] ze stacji [stacja początkowa]
+    do stacji [stacja końcowa] przez stacje: [stacje pośrednie] wjedzie na tor [tor]
+    przy peronie [peron]. [komunikaty dodatkowe]. Prosimy zachować ostrożność i nie
+    zbliżać się do krawędzi peronu. Planowy odjazd pociągu o godzinie [godzina odjazdu].
+  templates:
+    human: >-
+      {{- /**/}}Pociąg {{with .Category}}{{.}} {{end}}{{with .Carrier}}{{.}} {{end}}
+      {{- with .Name}}{{.}} {{end}}
+      {{- if not .First}}ze stacji {{.From}} {{end}}
+      {{- if not .Last}}do stacji {{.To}} {{end}}
+      {{- with .By}}przez stacje: {{.}}{{end}}, planowy {{if .First}}odjazd{{else}}przyjazd{{end}}
+      {{- /**/}} o godzinie {{.Scheduled}}, {{if .First}}odjedzie{{else}}przyjedzie{{end}} z opóźnieniem około {{.Delay}} minut.
+      {{- /**/}} Pociąg {{with .Category}}{{.}} {{end}}{{with .Carrier}}{{.}} {{end}}
+      {{- with .Name}}{{.}} {{end}}
+      {{- if not .First}}ze stacji {{.From}} {{end}}
+      {{- if not .Last}}do stacji {{.To}} {{end}}
+      {{- with .By}}przez stacje: {{.}}{{end}}, planowy {{if .First}}odjazd{{else}}przyjazd{{end}}
+      {{- /**/}} o godzinie {{.Scheduled}}, {{if .First}}odjedzie{{else}}przyjedzie{{end}} z opóźnieniem około {{.Delay}} minut.
+      {{- /**/}} Opóźnienie może ulec zmianie. Prosimy o zwracanie uwagi na komunikaty.
+      {{- /**/}} Za opóźnienie pociągu przepraszamy.
+    tts: >-
+      {{- /**/}}<s xml:lang="pl">Pociąg {{with .Category}}<emphasis level="strong">{{.}}</emphasis>{{end}}
+      {{- with .Carrier}} <emphasis level="strong">{{.}}</emphasis>{{end}}
+      {{- with .Name}} <emphasis level="strong">{{.}}</emphasis>{{end}}
+      {{- if not .First}}, ze stacji: <emphasis level="strong">{{.From}}</emphasis>,{{end}}
+      {{- if not .Last}}, do stacji: <emphasis level="strong">{{.To}}</emphasis>,{{end}}
+      {{- with .By}}, przez stacje: <emphasis level="strong">{{.}}</emphasis>,{{end}}
+      {{- /**/}}, planowy {{if .First}}odjazd{{else}}przyjazd{{end}} o godzinie {{.Scheduled}}
+      {{- /**/}} , {{if .First}}odjedzie{{else}}przyjedzie{{end}} z opóźnieniem
+      {{- /**/}} około <emphasis level="strong">{{.Delay}}</emphasis> minut.
+      {{- /**/}} Pociąg {{with .Category}}<emphasis level="strong">{{.}}</emphasis>{{end}}
+      {{- with .Carrier}} <emphasis level="strong">{{.}}</emphasis>{{end}}
+      {{- with .Name}} <emphasis level="strong">{{.}}</emphasis>{{end}}
+      {{- if not .First}}, ze stacji: <emphasis level="strong">{{.From}}</emphasis>,{{end}}
+      {{- if not .Last}}, do stacji: <emphasis level="strong">{{.To}}</emphasis>,{{end}}
+      {{- with .By}}, przez stacje: <emphasis level="strong">{{.}}</emphasis>,{{end}}
+      {{- /**/}}, planowy {{if .First}}odjazd{{else}}przyjazd{{end}} o godzinie {{.Scheduled}}
+      {{- /**/}} , {{if .First}}odjedzie{{else}}przyjedzie{{end}} z opóźnieniem
+      {{- /**/}} około <emphasis level="strong">{{.Delay}}</emphasis> minut.
+      {{- /**/}} Opóźnienie może ulec zmianie. Prosimy o zwracanie uwagi na komunikaty.
+      {{- /**/}} Za opóźnienie pociągu przepraszamy.</s>
+    html: >-
+      {{- /**/}}Pociąg {{- with .Category}} <span class="tpl-param" data-name="category">{{.}}</span> {{end}}
+      {{- with .Carrier}}<span class="tpl-param" data-name="carrier">{{.}}</span> {{end}}
+      {{- with .Name}}<span class="tpl-param" data-name="name">{{.}}</span> {{end}}
+      {{- if not .First}}ze stacji <span class="tpl-param" data-name="from">{{.From}}</span> {{end}}
+      {{- if not .Last}}do stacji <span class="tpl-param" data-name="category">{{.To}}</span>{{end}}
+      {{- with .By}}, przez stacje: <span class="tpl-param" data-name="by">{{.}}</span>{{end -}}
+      {{- /**/}}, planowy {{if .First}}odjazd{{else}}przyjazd{{end}} o godzinie <span class="tpl-param" data-name="arrival">{{.Scheduled}}</span>
+      {{- /**/}} {{if .First}}odjedzie{{else}}przyjedzie{{end}} z opóźnieniem około <span class="tpl-param" data-name="delay">{{.Delay}}</span> minut.
+      {{- /**/}} Pociąg {{- with .Category}} <span class="tpl-param" data-name="category">{{.}}</span> {{end}}
+      {{- with .Carrier}}<span class="tpl-param" data-name="carrier">{{.}}</span> {{end}}
+      {{- with .Name}}<span class="tpl-param" data-name="name">{{.}}</span> {{end}}
+      {{- if not .First}}ze stacji <span class="tpl-param" data-name="from">{{.From}}</span> {{end}}
+      {{- if not .Last}}do stacji <span class="tpl-param" data-name="category">{{.To}}</span>{{end}}
+      {{- with .By}}, przez stacje: <span class="tpl-param" data-name="by">{{.}}</span>{{end -}}
+      {{- /**/}}, planowy {{if .First}}odjazd{{else}}przyjazd{{end}} o godzinie <span class="tpl-param" data-name="arrival">{{.Scheduled}}</span>
+      {{- /**/}} {{if .First}}odjedzie{{else}}przyjedzie{{end}} z opóźnieniem około <span class="tpl-param" data-name="delay">{{.Delay}}</span> minut.
+      {{- /**/}}<br/>Opóźnienie może ulec zmianie. Prosimy o zwracanie uwagi na komunikaty.
+      {{- /**/}}<br/>Za opóźnienie pociągu przepraszamy.
+-
+  id: "bus_arrival"
+  type: "busArrival"
+  lang: pl
+  categories:
+    - "Komunikacja zastępcza"
+  title: "Przyjazd autobusu zastępczego"
+  description: >+
+    [Opóźniony] autobus komunikacji zastępczej ze stacji [stacja początkowa autobusu],
+    za pociąg [kategoria] [przewoźnik] [nazwa] relacji [stacja początkowa] - [stacja końcowa],
+    zatrzyma się przed budynkiem dworca PKP Radom.
+  templates:
+    human: >-
+      {{- if .Delayed}}Opóźniony autobus {{else}}Autobus {{end}}
+      {{- /**/}}komunikacji zastępczej ze stacji {{.SubrouteStart}}
+      {{- /**/}} za pociąg {{with .Category}}{{.}} {{end}}{{with .Carrier}}{{.}} {{end}}
+      {{- with .Name}}{{.}} {{end}}relacji {{.From}} - {{.To}}
+      {{- /**/}} zatrzyma się przed budynkiem dworca PKP Radom.
+      {{- if .Delayed}}Opóźniony autobus {{else}}Autobus {{end}}
+      {{- /**/}}komunikacji zastępczej ze stacji {{.SubrouteStart}}
+      {{- /**/}} za pociąg {{with .Category}}{{.}} {{end}}{{with .Carrier}}{{.}} {{end}}
+      {{- with .Name}}{{.}} {{end}}relacji {{.From}} - {{.To}}
+      {{- /**/}} zatrzyma się przed budynkiem dworca PKP Radom.
+    tts: >-
+      <s xml:lang="pl">{{if .Delayed}}Opóźniony autobus {{else}}Autobus {{end}}
+      {{- /**/}}komunikacji zastępczej ze stacji {{.SubrouteStart}}
+      {{- /**/}} za pociąg {{with .Category}}{{.}} {{end}}{{with .Carrier}}{{.}} {{end}}
+      {{- with .Name}}{{.}} {{end}}relacji {{.From}} - {{.To}},
+      {{- /**/}} zatrzyma się przed budynkiem dworca PKP Radom.
+      {{- if .Delayed}}O późniony autobus {{else}}Autobus {{end}}
+      {{- /**/}}komunikacji zastępczej ze stacji {{.SubrouteStart}}
+      {{- /**/}} za pociąg {{with .Category}}{{.}} {{end}}{{with .Carrier}}{{.}} {{end}}
+      {{- with .Name}}{{.}} {{end}}relacji {{.From}} - {{.To}},
+      {{- /**/}} zatrzyma się przed budynkiem dworca PKP Radom.</s>
+    html: >-
+      {{- if .Delayed}}Opóźniony autobus {{else}}Autobus {{end}}
+      {{- /**/}}komunikacji zastępczej ze stacji <span class="tpl-param" data-name="subroute-start">{{.SubrouteStart}}</span>
+      {{- /**/}} za pociąg {{with .Category}}<span class="tpl-param" data-name="category">{{.}}</span> {{end}}
+      {{- with .Carrier}}<span class="tpl-param" data-name="carrier">{{.}}</span> {{end}}
+      {{- with .Name}}<span class="tpl-param" data-name="name">{{.}}</span> {{end}}
+      {{- /**/}}relacji <span class="tpl-param" data-name="from">{{.From}}</span> - <span class="tpl-param" data-name="to">{{.To}}</span>,
+      {{- /**/}} zatrzyma się przed budynkiem dworca PKP Radom.
+      {{- if .Delayed}}Opóźniony autobus {{else}}Autobus {{end}}
+      {{- /**/}}komunikacji zastępczej ze stacji <span class="tpl-param" data-name="subroute-start">{{.SubrouteStart}}</span>
+      {{- /**/}} za pociąg {{with .Category}}<span class="tpl-param" data-name="category">{{.}}</span> {{end}}
+      {{- with .Carrier}}<span class="tpl-param" data-name="carrier">{{.}}</span> {{end}}
+      {{- with .Name}}<span class="tpl-param" data-name="name">{{.}}</span> {{end}}
+      {{- /**/}}relacji <span class="tpl-param" data-name="from">{{.From}}</span> - <span class="tpl-param" data-name="to">{{.To}}</span>,
+      {{- /**/}} zatrzyma się przed budynkiem dworca PKP Radom.
+-
+  id: "bus_setup"
+  type: "busSetup"
+  lang: pl
+  categories:
+    - "Komunikacja zastępcza"
+  title: "Podstawienie autobusu zastępczego"
+  description: >+
+    [Opóźniony] autobus komunikacji zastępczej do stacji [stacja końcowa autobusu],
+    za pociąg [kategoria] [przewoźnik] [nazwa] relacji [stacja początkowa] - [stacja końcowa],
+    stoi przed budynkiem dworca PKP Radom.
+    Planowy odjazd o godzinie [godzina odjazdu].
+  templates:
+    human: >-
+      {{- /**/}}Autobus komunikacji zastępczej do stacji {{.SubrouteEnd}}
+      {{- /**/}} za pociąg {{with .Category}}{{.}} {{end}}{{with .Carrier}}{{.}} {{end}}
+      {{- with .Name}}{{.}} {{end}}relacji {{.From}} - {{.To}}
+      {{- /**/}} stoi przed budynkiem dworca PKP Radom.
+      {{- /**/}}Autobus komunikacji zastępczej do stacji {{.SubrouteEnd}}
+      {{- /**/}} za pociąg {{with .Category}}{{.}} {{end}}{{with .Carrier}}{{.}} {{end}}
+      {{- with .Name}}{{.}} {{end}}relacji {{.From}} - {{.To}}
+      {{- /**/}} stoi przed budynkiem dworca PKP Radom.
+      Planowy odjazd o godzinie {{.Departure}}.
+    tts: >-
+      <s xml:lang="pl">{{- /**/}}Autobus komunikacji zastępczej do stacji {{.SubrouteEnd}}
+      {{- /**/}} za pociąg {{with .Category}}{{.}} {{end}}{{with .Carrier}}{{.}} {{end}}
+      {{- with .Name}}{{.}} {{end}}relacji {{.From}} - {{.To}}
+      {{- /**/}} stoi przed budynkiem dworca PKP Radom.
+      {{- /**/}}Autobus komunikacji zastępczej do stacji {{.SubrouteEnd}}
+      {{- /**/}} za pociąg {{with .Category}}{{.}} {{end}}{{with .Carrier}}{{.}} {{end}}
+      {{- with .Name}}{{.}} {{end}}relacji {{.From}} - {{.To}}
+      {{- /**/}} stoi przed budynkiem dworca PKP Radom.
+      Planowy odjazd o godzinie {{.Departure}}.</s>
+    html: >-
+      {{- /**/}}Autobus komunikacji zastępczej do stacji
+      {{- /**/}} <span class="tpl-param" data-name="subroute-end">{{.SubrouteEnd}}</span>
+      {{- /**/}} za pociąg {{with .Category}}<span class="tpl-param" data-name="category">{{.}}</span> {{end}}
+      {{- with .Carrier}}<span class="tpl-param" data-name="carrier">{{.}}</span> {{end}}
+      {{- with .Name}}<span class="tpl-param" data-name="name">{{.}}</span> {{end}}relacji
+      {{- /**/}} <span class="tpl-param" data-name="from">{{.From}}</span> - <span class="tpl-param" data-name="to">{{.To}}</span>,
+      {{- /**/}} stoi przed budynkiem dworca PKP Radom.
+      {{- /**/}}Autobus komunikacji zastępczej do stacji
+      {{- /**/}} <span class="tpl-param" data-name="subroute-end">{{.SubrouteEnd}}</span>
+      {{- /**/}} za pociąg {{with .Category}}<span class="tpl-param" data-name="category">{{.}}</span> {{end}}
+      {{- with .Carrier}}<span class="tpl-param" data-name="carrier">{{.}}</span> {{end}}
+      {{- with .Name}}<span class="tpl-param" data-name="name">{{.}}</span> {{end}}relacji
+      {{- /**/}} <span class="tpl-param" data-name="from">{{.From}}</span> - <span class="tpl-param" data-name="to">{{.To}}</span>,
+      {{- /**/}} stoi przed budynkiem dworca PKP Radom.
+      Planowy odjazd o godzinie <span class="tpl-param" data-name="departure">{{.Departure}}</span>.

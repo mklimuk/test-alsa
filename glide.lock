@@ -1,10 +1,70 @@
-hash: de5832ebc4f3d8e875b9dd0f26a50d5afc0048fe4dfc7fead0ba428d17d4bc4c
-updated: 2016-12-01T09:24:48.613853675+01:00
+hash: bf114821a7c68db13f3311b7e9c4464a1edbfde7bb6c654c5aaf2b7ded7ef9de
+updated: 2016-12-05T19:50:26.779178344+01:00
 imports:
 - name: github.com/cocoonlife/goalsa
   version: b711ae6f3eff1a4f0cc4edfe321ab171027f85d4
+- name: github.com/davecgh/go-spew
+  version: 5215b55f46b2b919f50a1df0eaa5886afe4e3b3d
+  subpackages:
+  - spew
+- name: github.com/gin-gonic/gin
+  version: e2212d40c62a98b388a5eb48ecbdcf88534688ba
+  subpackages:
+  - binding
+  - render
+- name: github.com/golang/protobuf
+  version: 2402d76f3d41f928c7902a765dfc872356dd3aad
+  subpackages:
+  - proto
+- name: github.com/gorilla/websocket
+  version: 1f512fc3f05332ba7117626cdfb4e07474e58e60
+- name: github.com/manucorporat/sse
+  version: ee05b128a739a0fb76c7ebd3ae4810c1de808d6d
+- name: github.com/mattn/go-isatty
+  version: 30a891c33c7cde7b02a981314b4228ec99380cca
+- name: github.com/mklimuk/goalsa
+  version: b711ae6f3eff1a4f0cc4edfe321ab171027f85d4
+- name: github.com/mklimuk/husar
+  version: 99cf7cb576dff6d50a0dc7ebaf6d8e5eb4fd92e8
+  repo: git@github.com:mklimuk/husar.git
+  vcs: git
+  subpackages:
+  - errors
+  - event
+  - rest
+- name: github.com/mklimuk/websocket
+  version: dc325a9c0e3f90db8abbdeae754c2ee4b1cf63b9
 - name: github.com/Narsil/alsa-go
   version: deca482488fbb14942371b9fe8d46c15504dd830
+- name: github.com/pmezard/go-difflib
+  version: 792786c7400a136282c1664665ae0a8db921c6c2
+  subpackages:
+  - difflib
+- name: github.com/satori/go.uuid
+  version: 879c5887cd475cd7864858769793b2ceb0d44feb
+- name: github.com/Sirupsen/logrus
+  version: d26492970760ca5d33129d2d799e34be5c4782eb
+- name: github.com/stretchr/objx
+  version: cbeaeb16a013161a98496fad62933b1d21786672
+- name: github.com/stretchr/testify
+  version: f390dcf405f7b83c997eac1b06768bb9f44dec18
+  subpackages:
+  - assert
+  - mock
+  - require
+  - suite
 - name: github.com/urfave/cli
   version: 0bdeddeeb0f650497d603c4ad7b20cfe685682f6
+- name: golang.org/x/net
+  version: f315505cf3349909cdf013ea56690da34e96a451
+  subpackages:
+  - context
+- name: golang.org/x/sys
+  version: 5eaf0df67e70d6997a9fe0ed24383fa1b01638d3
+  subpackages:
+  - unix
+- name: gopkg.in/go-playground/validator.v8
+  version: c193cecd124b5cc722d7ee5538e945bdb3348435
+- name: gopkg.in/yaml.v2
+  version: a5b47d31c556af34a302ce5d659e6fea44d90de0
 testImports: []

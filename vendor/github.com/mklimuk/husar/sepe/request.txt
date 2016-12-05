@@ -1,0 +1,20 @@
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:v1="http://sdip.plk-sa.pl/v1.2">
+   <soapenv:Header/>
+   <soapenv:Body>
+      <v1:PobierzRozkladPlanowy>
+         <!--Optional:-->
+         <v1:kryteria>
+            <v1:ZakresRozkladu>Tygodniowy</v1:ZakresRozkladu>
+            <!--Optional:-->
+            <v1:DataOd>2016-08-02</v1:DataOd>
+            <!--Optional:-->
+            <v1:DataDo>2016-08-06</v1:DataDo>
+            <!--Optional:-->
+            <v1:ListaStacji>
+               <!--Zero or more repetitions:-->
+               <v1:IdentyfikatorStacji>48355</v1:IdentyfikatorStacji>
+            </v1:ListaStacji>
+         </v1:kryteria>
+      </v1:PobierzRozkladPlanowy>
+   </soapenv:Body>
+</soapenv:Envelope>
