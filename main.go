@@ -27,7 +27,10 @@ func main() {
 	f := websocket.NewFactory()
 
 	clog.Info("Initializing REST router...")
-	z := api.NewPlaybackAPI(p, f)
+	var err error
+	if z, err = api.NewPlaybackAPI(p, f); err != nil {
+		panic(err)
+	}
 
 	router := gin.New()
 	z.AddRoutes(router)
