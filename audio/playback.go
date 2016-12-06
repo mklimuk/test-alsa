@@ -3,6 +3,7 @@ package audio
 import (
 	"bufio"
 	"encoding/binary"
+	"encoding/json"
 	"errors"
 	"io"
 	"os"
@@ -14,13 +15,14 @@ import (
 )
 
 const sampleSizeBytes = 2
+const textMessage = 1
 
 //Playback is the interface responsible for communication with audio device
 type Playback interface {
 	DeviceBusy() (bool, int)
 	BufferSize() int
 	PlaybackContext() *StreamContext
-	PlayFromWsConnection(c websocket.Connection, context *StreamContext) error
+	PlayFromWsConnection(c websocket.Connection) error
 	Close()
 }
 
@@ -77,9 +79,30 @@ func (p *play) DeviceBusy() (bool, int) {
 	return true, p.context.Priority
 }
 
-func (p *play) PlayFromWsConnection(c websocket.Connection, context *StreamContext) error {
+func (p *play) PlayFromWsConnection(c websocket.Connection) error {
 	p.connMutex.Lock()
 	defer p.connMutex.Unlock()
+	//wait for the context
+	var mt int
+	var message []byte
+	var err error
+	if mt, message, err = c.ReadMessage(); err != nil {
+		log.WithFields(log.Fields{"logger": "ws.audio-endpoint.audio", "method": "PlayFromWsConnection"}).
+			WithError(err).Error("Websocket read error encountered")
+		return err
+	}
+
+	if mt != textMessage {
+		return errors.New("Wrong message type. First message should be a text one")
+	}
+
+	var context = new(StreamContext)
+	if err = json.Unmarshal(message, context); err != nil {
+		log.WithFields(log.Fields{"logger": "ws.audio-endpoint.audio", "method": "PlayFromWsConnection"}).
+			WithError(err).Error("Could not decode stream context")
+		return err
+	}
+
 	//if we try to register stream without checking if it is legitimate we get rejected
 	if p.context != nil && p.context.Priority > context.Priority {
 		return errors.New("Device busy")

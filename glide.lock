@@ -1,5 +1,5 @@
-hash: 91716c68b31f3ace0914508c9fefab43756dcab65afe8481c99af35c72f0b966
-updated: 2016-12-05T19:53:10.931516439+01:00
+hash: b64172e009fbb6f4531f39750dba2b6928a0d0558b17a63999479ab0cf8b7542
+updated: 2016-12-06T17:10:47.413415485+01:00
 imports:
 - name: github.com/davecgh/go-spew
   version: 5215b55f46b2b919f50a1df0eaa5886afe4e3b3d
@@ -31,7 +31,7 @@ imports:
   - event
   - rest
 - name: github.com/mklimuk/websocket
-  version: dc325a9c0e3f90db8abbdeae754c2ee4b1cf63b9
+  version: 1eaf08cf19e2dea5c8b5a8df14d990d2d33395f6
 - name: github.com/pmezard/go-difflib
   version: 792786c7400a136282c1664665ae0a8db921c6c2
   subpackages:

@@ -1,10 +1,7 @@
 package api
 
 import (
-	"net/http"
-
 	"github.com/gin-gonic/gin"
-	"github.com/mklimuk/husar/errors"
 	"github.com/mklimuk/husar/rest"
 	"github.com/mklimuk/test-alsa/audio"
 	"github.com/mklimuk/websocket"
@@ -24,25 +21,20 @@ func NewPlaybackAPI(a audio.Playback, factory websocket.ConnectionFactory) rest.
 }
 
 func (p *playAPI) AddRoutes(router *gin.Engine) {
-	router.POST("/audio/play", p.play)
+	router.GET("/audio/play", p.play)
 }
 
 // play establishes a websocket connection and writes binary data to the playback device
 func (p *playAPI) play(ctx *gin.Context) {
 	log.WithFields(log.Fields{"logger": "audio-endpoint.api", "method": "play"}).
 		Info("Establishing playback connection")
-	req := new(audio.StreamContext)
+	var c websocket.Connection
 	var err error
-	if err = ctx.BindJSON(req); err != nil {
-		log.WithFields(log.Fields{"logger": "audio-endpoint.api", "method": "play"}).Warn("Could not parse request")
-		ctx.JSON(http.StatusBadRequest, errors.GetCtx(err))
+	if c, err = p.factory.UpgradeConnection(ctx.Writer, ctx.Request, nil); err != nil {
+		ctx.AbortWithError(500, err)
 		return
 	}
-	var c websocket.Connection
-	if c, err = p.factory.UpgradeConnection(ctx.Writer, ctx.Request, nil); err != nil {
-
-	}
-	if err = p.a.PlayFromWsConnection(c, req); err != nil {
-
+	if err = p.a.PlayFromWsConnection(c); err != nil {
+		ctx.AbortWithError(400, err)
 	}
 }
