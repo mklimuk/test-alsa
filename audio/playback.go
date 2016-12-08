@@ -96,6 +96,10 @@ func (p *play) PlayFromWsConnection(c websocket.Connection) error {
 		return errors.New("Wrong message type. First message should be a text one")
 	}
 
+	if log.GetLevel() >= log.DebugLevel {
+		log.WithFields(log.Fields{"logger": "ws.audio-endpoint.audio", "method": "PlayFromWsConnection", "message": string(message)}).
+			Debug("Received message")
+	}
 	var context = new(StreamContext)
 	if err = json.Unmarshal(message, context); err != nil {
 		log.WithFields(log.Fields{"logger": "ws.audio-endpoint.audio", "method": "PlayFromWsConnection"}).
