@@ -31,10 +31,9 @@ func (p *playAPI) play(ctx *gin.Context) {
 	var c websocket.Connection
 	var err error
 	if c, err = p.factory.UpgradeConnection(ctx.Writer, ctx.Request, nil); err != nil {
-		ctx.AbortWithError(500, err)
-		return
+		ctx.AbortWithError(400, err)
 	}
 	if err = p.a.PlayFromWsConnection(c); err != nil {
-		ctx.AbortWithError(400, err)
+		c.Close()
 	}
 }
