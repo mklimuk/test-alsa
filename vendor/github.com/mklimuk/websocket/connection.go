@@ -21,7 +21,7 @@ const (
 	pingPeriod = 7 * time.Second
 
 	// Maximum message size allowed from peer.
-	maxMessageSize = 2048
+	maxMessageSize = 8192
 )
 
 //Connection is a wrapper over raw websocket that exposes read and write channels

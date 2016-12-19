@@ -6,7 +6,7 @@ import (
 )
 
 const channels = 1
-const rate = 22050
+const rate = 44100
 const deviceName = "sysdefault"
 const format = goalsa.FormatS16LE
 
