@@ -34,7 +34,7 @@ func main() {
 	}
 	log.SetLevel(l)
 
-	conf := &config.AudioConf{DeviceBuffer: 4096, ReadBuffer: 8192, PeriodFrames: 2048, Periods: 2}
+	conf := &config.AudioConf{DeviceBuffer: 2048, ReadBuffer: 2048, PeriodFrames: 1024, Periods: 2}
 	params := &audio.BufferParams{BufferFrames: conf.DeviceBuffer, PeriodFrames: conf.PeriodFrames, Periods: conf.Periods}
 
 	var dev audio.PlaybackDevice
