@@ -26,12 +26,14 @@ func (p *playAPI) AddRoutes(router *gin.Engine) {
 
 // play establishes a websocket connection and writes binary data to the playback device
 func (p *playAPI) play(ctx *gin.Context) {
+	defer rest.ErrorHandler(ctx)
 	log.WithFields(log.Fields{"logger": "audio-endpoint.api", "method": "play"}).
 		Info("Establishing playback connection")
 	var c websocket.Connection
 	var err error
 	if c, err = p.factory.UpgradeConnection(ctx.Writer, ctx.Request, nil); err != nil {
 		ctx.AbortWithError(400, err)
+		return
 	}
 	if err = p.a.PlayFromWsConnection(c); err != nil {
 		c.Close()

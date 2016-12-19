@@ -60,7 +60,7 @@ func (suite *PlaybackTestSuite) TestConvertBuffers() {
 func (suite *PlaybackTestSuite) TestPlaybackOngoing() {
 	c := websocket.ConnectionMock{}
 	pl := play{context: &StreamContext{Priority: 3}}
-	err := pl.PlayFromWsConnection(&c, &StreamContext{Priority: 2})
+	err := pl.PlayFromWsConnection(&c)
 	assert.Error(suite.T(), err)
 }
 
@@ -75,7 +75,7 @@ func (suite *PlaybackTestSuite) TestRegularPlayback() {
 	c.On("Control").Return(ctrl)
 	c.On("In").Return(bin, str)
 	p := New(&config.AudioConf{ReadBuffer: 4, DeviceBuffer: 2, PeriodFrames: 1, Periods: 2}, d, "").(*play)
-	err := p.PlayFromWsConnection(c, &StreamContext{Priority: 2, Description: "test"})
+	err := p.PlayFromWsConnection(c)
 	assert.NoError(suite.T(), err)
 	time.Sleep(time.Duration(1 * time.Second))
 	bin <- []byte{0x0A, 0x00, 0x01, 0x02}

@@ -148,12 +148,12 @@ func (m *ListenerMock) Handle(msg interface{}) {
 }
 
 //FactoryMock is a connection factory mock
-type factoryMock struct {
+type FactoryMock struct {
 	mock.Mock
 }
 
 //UpgradeConnection is a mocked method
-func (u *factoryMock) UpgradeConnection(writer http.ResponseWriter, req *http.Request, channels []string) (Connection, error) {
+func (u *FactoryMock) UpgradeConnection(writer http.ResponseWriter, req *http.Request, channels []string) (Connection, error) {
 	args := u.Called(writer, req, channels)
 	if args.Get(0) == nil {
 		return nil, args.Error(1)

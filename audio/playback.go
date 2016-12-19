@@ -97,7 +97,7 @@ func (p *play) PlayFromWsConnection(c websocket.Connection) error {
 	}
 
 	if log.GetLevel() >= log.DebugLevel {
-		log.WithFields(log.Fields{"logger": "ws.audio-endpoint.audio", "method": "PlayFromWsConnection", "message": string(message)}).
+		log.WithFields(log.Fields{"logger": "ws.audio-endpoint.audio", "method": "PlayFromWsConnection", "message": message}).
 			Debug("Received message")
 	}
 	var context = new(StreamContext)
