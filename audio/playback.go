@@ -5,6 +5,7 @@ import (
 	"encoding/binary"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"io"
 	"os"
 	"sync"
@@ -69,6 +70,10 @@ func New(conf *config.AudioConf, factory DeviceFactory, introFile string) Playba
 		factory:   factory,
 		bufParams: &BufferParams{BufferFrames: conf.DeviceBuffer, PeriodFrames: conf.PeriodFrames, Periods: conf.Periods},
 		introFile: introFile,
+	}
+	if log.GetLevel() >= log.DebugLevel {
+		log.WithFields(log.Fields{"logger": "ws.audio-endpoint.audio", "method": "New", "introFile": p.introFile, "bufParams": fmt.Sprintf("%+v", &(p.bufParams))}).
+			Debug("Playback configuration")
 	}
 	return &p
 }
@@ -184,6 +189,10 @@ func (p *play) doPlayFromWsConnection() {
 						Info("Binary input channel is closed; aborting read loop")
 				}
 				return
+			}
+			if log.GetLevel() >= log.DebugLevel {
+				log.WithFields(log.Fields{"logger": "audio-endpoint.audio", "method": "doPlayFromWsConnection", "bufferLen": len(buf)}).
+					Debug("Read buffer info")
 			}
 			convertBuffers(buf, buf16)
 			var err error
