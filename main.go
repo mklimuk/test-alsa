@@ -35,8 +35,8 @@ func main() {
 	log.SetLevel(l)
 
 	conf := &config.AudioConf{DeviceBuffer: 4096, PeriodFrames: 2048, Periods: 2}
-	f := &alsa.Factory{}
-	p := audio.New(conf, f, "/etc/husar/dong.wav")
+	d := &alsa.Factory{}
+	p := audio.New(conf, d, "/etc/husar/dong.wav")
 	f := websocket.NewFactory()
 
 	clog.Info("Initializing REST router...")
