@@ -14,15 +14,16 @@ import (
 )
 
 const (
-	defaultLogLevel string = "warn"
+	defaultLogLevel   string = "warn"
+	defaultConfigPath string = "/etc/husar/playback.yml"
 )
 
 func main() {
 	clog := log.WithFields(log.Fields{"logger": "mic-receiver.main"})
 
 	//read config path and log level from runtime flags
-	//var configPath string
-	//flag.StringVar(&configPath, "config", defaultConfigPath, "Path to yaml configuration file")
+	var configPath string
+	flag.StringVar(&configPath, "config", defaultConfigPath, "Path to yaml configuration file")
 	level := flag.String("log", "info", "Log level")
 	flag.Parse()
 
@@ -34,9 +35,9 @@ func main() {
 	}
 	log.SetLevel(l)
 
-	conf := &config.AudioConf{DeviceBuffer: 4096, PeriodFrames: 2048, Periods: 2}
+	conf := config.Parse(configPath)
 	d := &alsa.Factory{}
-	p := audio.New(conf, d, "/etc/husar/dong.wav")
+	p := audio.New(&(conf.Audio), d, "/etc/husar/dong.wav")
 	f := websocket.NewFactory()
 
 	clog.Info("Initializing REST router...")
