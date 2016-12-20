@@ -166,7 +166,7 @@ func (p *play) doPlayFromWsConnection() {
 	}
 
 	var buf []byte
-	buf16 := make([]int16, p.context.BufferSize/sampleSizeBytes)
+	buf16 := make([]int16, p.context.BufferSize)
 
 	//now we can start reading data
 	if log.GetLevel() >= log.DebugLevel {
@@ -196,6 +196,10 @@ func (p *play) doPlayFromWsConnection() {
 				log.WithFields(log.Fields{"logger": "audio-endpoint.audio", "method": "PlayFromWsConnection"}).
 					WithError(err).Error("Could not write buffer content to device")
 				return
+			}
+			if log.GetLevel() >= log.DebugLevel {
+				log.WithFields(log.Fields{"logger": "audio-endpoint.audio", "method": "PlayFromWsConnection", "wroteFrames": wrote, "readBytes": len(buf)}).
+					Debug("Wrote read buffer to device")
 			}
 			p.context.framesWrote += wrote
 			p.context.bytesRead += len(buf)
