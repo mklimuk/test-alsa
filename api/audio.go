@@ -36,6 +36,6 @@ func (p *playAPI) play(ctx *gin.Context) {
 		return
 	}
 	if err = p.a.PlayFromWsConnection(c); err != nil {
-		c.Close()
+		c.Close("")
 	}
 }
