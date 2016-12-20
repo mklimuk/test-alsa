@@ -14,3 +14,8 @@ type PlaybackDevice interface {
 	Write(buffer interface{}) (samples int, err error)
 	Close()
 }
+
+//DeviceFactory provides new initialized playback devices
+type DeviceFactory interface {
+	New(sampleRate int, channels int, bp *BufferParams) (PlaybackDevice, error)
+}

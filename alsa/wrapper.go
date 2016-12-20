@@ -5,12 +5,14 @@ import (
 	"github.com/mklimuk/test-alsa/audio"
 )
 
-const channels = 1
-const rate = 44100
 const deviceName = "sysdefault"
 const format = goalsa.FormatS16LE
 
-//NewPlaybackDevice wraps goalsa PlaybackDevice constructor for testing convienience
-func NewPlaybackDevice(bp *audio.BufferParams) (p audio.PlaybackDevice, err error) {
-	return goalsa.NewPlaybackDevice(deviceName, channels, format, rate, goalsa.BufferParams{BufferFrames: bp.BufferFrames, PeriodFrames: bp.PeriodFrames, Periods: bp.Periods})
+//Factory implements audio.DeviceFactory interface
+type Factory struct {
+}
+
+//New wraps goalsa PlaybackDevice constructor for testing convienience
+func (f *Factory) New(sampleRate int, channels int, bp *audio.BufferParams) (audio.PlaybackDevice, error) {
+	return goalsa.NewPlaybackDevice(deviceName, channels, format, sampleRate, goalsa.BufferParams{BufferFrames: bp.BufferFrames, PeriodFrames: bp.PeriodFrames, Periods: bp.Periods})
 }

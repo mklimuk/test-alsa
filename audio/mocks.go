@@ -57,3 +57,17 @@ func (p *PlaybackMock) PlayFromWsConnection(c websocket.Connection) error {
 func (p *PlaybackMock) Close() {
 	p.Called()
 }
+
+//FactoryMock is a mock of the DeficeFactory interface
+type FactoryMock struct {
+	mock.Mock
+}
+
+//New is a mocked method
+func (f *FactoryMock) New(sampleRate int, channels int, bp *BufferParams) (PlaybackDevice, error) {
+	args := f.Called(sampleRate, channels, bp)
+	if args.Get(0) == nil {
+		return nil, args.Error(1)
+	}
+	return args.Get(0).(PlaybackDevice), args.Error(1)
+}
