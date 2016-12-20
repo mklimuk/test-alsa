@@ -30,7 +30,6 @@ type AudioConf struct {
 	SetVolumePath string   `yaml:"setVol"`
 	GetVolumePath string   `yaml:"getVol"`
 	DeviceBuffer  int      `yaml:"deviceBuffer"`
-	ReadBuffer    int      `yaml:"readBuffer"`
 	PeriodFrames  int      `yaml:"periodFrames"`
 	Periods       int      `yaml:"periods"`
 }

@@ -25,17 +25,12 @@ func (suite *PlaybackTestSuite) TearDownSuite() {
 }
 
 func (suite *PlaybackTestSuite) TestConstructor() {
-	p := New(&config.AudioConf{ReadBuffer: 4096, DeviceBuffer: 1024, PeriodFrames: 512, Periods: 2}, &DeviceMock{}, "").(*play)
+	p := New(&config.AudioConf{DeviceBuffer: 1024, PeriodFrames: 512, Periods: 2}, &FactoryMock{}, "").(*play)
 	a := assert.New(suite.T())
-	a.NotNil(p.buf)
-	a.NotNil(p.buf16)
-	a.Len(p.buf, 4096)
-	a.Len(p.buf16, 2048)
 	a.NotNil(p.bufParams)
 	a.Equal(1024, p.bufParams.BufferFrames)
 	a.Equal(512, p.bufParams.PeriodFrames)
 	a.Equal(2, p.bufParams.Periods)
-	a.Equal(4096, p.BufferSize())
 }
 
 func (suite *PlaybackTestSuite) TestDeviceBusy() {
@@ -59,6 +54,7 @@ func (suite *PlaybackTestSuite) TestConvertBuffers() {
 
 func (suite *PlaybackTestSuite) TestPlaybackOngoing() {
 	c := websocket.ConnectionMock{}
+	c.On("ReadMessage").Return(textMessage, []byte(`{"priority": 2}`), nil)
 	pl := play{context: &StreamContext{Priority: 3}}
 	err := pl.PlayFromWsConnection(&c)
 	assert.Error(suite.T(), err)
@@ -66,15 +62,20 @@ func (suite *PlaybackTestSuite) TestPlaybackOngoing() {
 
 func (suite *PlaybackTestSuite) TestRegularPlayback() {
 	d := &DeviceMock{}
+	f := &FactoryMock{}
+	f.On("New", mock.Anything, mock.Anything, mock.Anything).Return(d, nil)
 	d.On("Write", mock.Anything).Return(2, nil)
 	c := &websocket.ConnectionMock{}
+	c.On("ReadMessage").Return(textMessage, []byte(`{"priority": 2}`), nil)
+	c.On("WriteLoop", mock.Anything).After(time.Duration(2 * time.Second)).Return()
 	c.On("ReadLoop").After(time.Duration(2 * time.Second)).Return()
+	c.On("Close", mock.Anything).Return().Once()
 	ctrl := make(chan bool)
 	bin := make(chan []byte)
 	str := make(chan string)
 	c.On("Control").Return(ctrl)
 	c.On("In").Return(bin, str)
-	p := New(&config.AudioConf{ReadBuffer: 4, DeviceBuffer: 2, PeriodFrames: 1, Periods: 2}, d, "").(*play)
+	p := New(&config.AudioConf{DeviceBuffer: 2, PeriodFrames: 1, Periods: 2}, f, "").(*play)
 	err := p.PlayFromWsConnection(c)
 	assert.NoError(suite.T(), err)
 	time.Sleep(time.Duration(1 * time.Second))
@@ -82,8 +83,7 @@ func (suite *PlaybackTestSuite) TestRegularPlayback() {
 	ctrl <- true
 	d.AssertExpectations(suite.T())
 	c.AssertExpectations(suite.T())
-	assert.Equal(suite.T(), 2, p.context.framesWrote)
-	assert.Equal(suite.T(), 4, p.context.bytesRead)
+	assert.Nil(suite.T(), p.context)
 }
 
 func (suite *PlaybackTestSuite) TestPlaybackInterrupt() {

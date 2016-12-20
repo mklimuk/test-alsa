@@ -16,14 +16,28 @@ import (
 
 const sampleSizeBytes = 2
 const textMessage = 1
+const defaultSampleRate = 22050
+const defaultChannels = 1
+
+var introEndMsg []byte
+var introStartMsg []byte
+
+func init() {
+	introStartMsg, _ = json.Marshal(SignallingMsg{"playback:intro:start", ""})
+	introEndMsg, _ = json.Marshal(SignallingMsg{"playback:intro:end", ""})
+}
+
+//SignallingMsg is a message exchanged with the peer during websocket playback
+type SignallingMsg struct {
+	Type    string `json:"type"`
+	Payload string `json:"payload"`
+}
 
 //Playback is the interface responsible for communication with audio device
 type Playback interface {
 	DeviceBusy() (bool, int)
-	BufferSize() int
 	PlaybackContext() *StreamContext
 	PlayFromWsConnection(c websocket.Connection) error
-	Close()
 }
 
 //StreamContext contains information about currently playing stream
@@ -33,37 +47,30 @@ type StreamContext struct {
 	Volume      int    `json:"volume"`
 	Type        string `json:"type"`
 	PlayIntro   bool   `json:"playIntro"`
+	SampleRate  int    `json:"sampleRate"`
+	Channels    int    `json:"channels"`
+	BufferSize  int    `json:"bufferSize"`
 	bytesRead   int
 	framesWrote int
 }
 
 type play struct {
-	bufParams  *BufferParams
 	connMutex  sync.Mutex
 	context    *StreamContext
 	connection websocket.Connection
 	introFile  string
-	bufferSize int
-	buf        []byte
-	buf16      []int16
-	device     PlaybackDevice
+	bufParams  *BufferParams
+	factory    DeviceFactory
 }
 
 //New is the playback interface constructor
-func New(conf *config.AudioConf, dev PlaybackDevice, introFile string) Playback {
+func New(conf *config.AudioConf, factory DeviceFactory, introFile string) Playback {
 	p := play{
-		bufParams:  &BufferParams{BufferFrames: conf.DeviceBuffer, PeriodFrames: conf.PeriodFrames, Periods: conf.Periods},
-		bufferSize: conf.ReadBuffer,
-		device:     dev,
-		buf16:      make([]int16, conf.ReadBuffer/sampleSizeBytes),
-		buf:        make([]byte, conf.ReadBuffer),
-		introFile:  introFile,
+		factory:   factory,
+		bufParams: &BufferParams{BufferFrames: conf.DeviceBuffer, PeriodFrames: conf.PeriodFrames, Periods: conf.Periods},
+		introFile: introFile,
 	}
 	return &p
-}
-
-func (p *play) BufferSize() int {
-	return p.bufferSize
 }
 
 func (p *play) PlaybackContext() *StreamContext {
@@ -115,7 +122,7 @@ func (p *play) PlayFromWsConnection(c websocket.Connection) error {
 	if p.connection != nil {
 		log.WithFields(log.Fields{"logger": "audio-endpoint.audio", "method": "registerStream"}).
 			Info("Stopping currently open connection")
-		p.connection.Close()
+		p.connection.Close("Higher priority transmission")
 	}
 	p.connection = c
 	p.context = context
@@ -125,6 +132,38 @@ func (p *play) PlayFromWsConnection(c websocket.Connection) error {
 }
 
 func (p *play) doPlayFromWsConnection() {
+	defer p.cleanup()
+	if log.GetLevel() >= log.DebugLevel {
+		log.WithFields(log.Fields{"logger": "audio-endpoint.audio", "method": "doPlayFromWsConnection"}).
+			Debug("Starting write loop")
+	}
+	//we initialize output for signalling
+	out := make(chan []byte)
+	go p.connection.WriteLoop(out)
+
+	var err error
+	//play 'dong' if requested
+	if p.context.PlayIntro == true {
+		out <- introStartMsg
+		if err = p.playFile(p.introFile); err != nil {
+			log.WithFields(log.Fields{"logger": "audio-endpoint.audio", "method": "doPlayFromWsConnection"}).
+				WithError(err).Error("Could not play dong")
+			p.connection.Close("Could not play dong")
+			return
+		}
+		out <- introEndMsg
+	}
+
+	//initialize playback device
+	var dev PlaybackDevice
+	if dev, err = p.factory.New(p.context.SampleRate, p.context.Channels, p.bufParams); err != nil {
+		p.connection.Close("Could not initialize dev")
+	}
+
+	var buf []byte
+	buf16 := make([]int16, p.context.BufferSize/sampleSizeBytes)
+
+	//now we can start reading data
 	if log.GetLevel() >= log.DebugLevel {
 		log.WithFields(log.Fields{"logger": "audio-endpoint.audio", "method": "PlayFromWsConnection"}).
 			Debug("Starting read loop")
@@ -133,14 +172,12 @@ func (p *play) doPlayFromWsConnection() {
 	bin, _ := p.connection.In()
 	ctrl := p.connection.Control()
 
-	if p.context.PlayIntro == true {
-		p.playFile(p.introFile)
-	}
 	var ok bool
 	var wrote int
+
 	for {
 		select {
-		case p.buf, ok = <-bin:
+		case buf, ok = <-bin:
 			if !ok {
 				if log.GetLevel() >= log.InfoLevel {
 					log.WithFields(log.Fields{"logger": "audio-endpoint.audio", "method": "PlayFromWsConnection", "Connection": p.connection.ID()}).
@@ -148,15 +185,15 @@ func (p *play) doPlayFromWsConnection() {
 				}
 				return
 			}
-			convertBuffers(p.buf, p.buf16)
+			convertBuffers(buf, buf16)
 			var err error
-			if wrote, err = p.device.Write(p.buf16); err != nil {
+			if wrote, err = dev.Write(buf16); err != nil {
 				log.WithFields(log.Fields{"logger": "audio-endpoint.audio", "method": "PlayFromWsConnection"}).
 					WithError(err).Error("Could not write buffer content to device")
 				return
 			}
 			p.context.framesWrote += wrote
-			p.context.bytesRead += len(p.buf)
+			p.context.bytesRead += len(buf)
 		case <-ctrl:
 			return
 		}
@@ -173,16 +210,25 @@ func (p *play) playFile(filepath string) error {
 
 	r := bufio.NewReader(f)
 
+	//initialize the device and buffers
+	var dev PlaybackDevice
+	if dev, err = p.factory.New(defaultSampleRate, defaultChannels, p.bufParams); err != nil {
+		return err
+	}
+
+	buf := make([]byte, 8192)
+	buf16 := make([]int16, 8192/sampleSizeBytes)
+
 	var read int
 	for {
-		if read, err = r.Read(p.buf); err != nil && err != io.EOF {
+		if read, err = r.Read(buf); err != nil && err != io.EOF {
 			return err
 		}
 		if read == 0 {
 			break
 		}
-		convertBuffers(p.buf, p.buf16)
-		if _, err = p.device.Write(p.buf16); err != nil {
+		convertBuffers(buf, buf16)
+		if _, err = dev.Write(buf16); err != nil {
 			log.WithFields(log.Fields{"logger": "audio-endpoint.audio", "method": "playFile"}).
 				WithError(err).Error("Could not write buffer content to device")
 			return err
@@ -191,8 +237,10 @@ func (p *play) playFile(filepath string) error {
 	return nil
 }
 
-func (p *play) Close() {
-	p.device.Close()
+func (p *play) cleanup() {
+	p.connection.Close("")
+	p.connection = nil
+	p.context = nil
 }
 
 func convertBuffers(buf []byte, buf16 []int16) {
