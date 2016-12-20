@@ -190,10 +190,6 @@ func (p *play) doPlayFromWsConnection() {
 				}
 				return
 			}
-			if log.GetLevel() >= log.DebugLevel {
-				log.WithFields(log.Fields{"logger": "audio-endpoint.audio", "method": "doPlayFromWsConnection", "bufferLen": len(buf)}).
-					Debug("Read buffer info")
-			}
 			convertBuffers(buf, buf16)
 			var err error
 			if wrote, err = dev.Write(buf16); err != nil {
@@ -247,6 +243,10 @@ func (p *play) playFile(filepath string) error {
 }
 
 func (p *play) cleanup() {
+	if log.GetLevel() >= log.InfoLevel {
+		log.WithFields(log.Fields{"logger": "audio-endpoint.audio", "method": "cleanup", "bytesRead": p.context.bytesRead, "framesWrote": p.context.framesWrote}).
+			Info("Audio device read, write summary")
+	}
 	p.connection.Close("")
 	p.connection = nil
 	p.context = nil
