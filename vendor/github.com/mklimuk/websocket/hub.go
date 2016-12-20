@@ -145,7 +145,7 @@ func (h *hub) readFrom(c Connection) {
 }
 
 func (h *hub) cleanup(c Connection) {
-	c.Close()
+	c.Close("")
 	close(c.Out())
 	//delete the Connection from broadcast channels
 	for _, ch := range c.Channels() {

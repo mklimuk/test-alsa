@@ -20,6 +20,7 @@ type gorillaFactory struct {
 	u ws.Upgrader
 }
 
+//NewFactory is the connection factory constructor
 func NewFactory() ConnectionFactory {
 	g := gorillaFactory{ws.Upgrader{}}
 	return &g

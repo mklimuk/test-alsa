@@ -31,7 +31,7 @@ type Connection interface {
 	ReadLoop()
 	ReadMessage() (int, []byte, error)
 	WriteLoop(<-chan []byte)
-	Close()
+	Close(reason string)
 	Control() chan bool
 	In() (chan []byte, chan string)
 	Out() chan []byte
@@ -124,7 +124,7 @@ func (c *conn) Channels() []string {
 }
 
 //Close cleans up gracefully
-func (c *conn) Close() {
+func (c *conn) Close(reason string) {
 	// we make sure that Close doesn't get called twice as this might cause writing to a closed channel
 	c.shutdown.Lock()
 	defer c.shutdown.Unlock()
@@ -138,7 +138,7 @@ func (c *conn) Close() {
 	c.control <- true
 	var err error
 	// write the close message to the peer
-	if err = c.write(websocket.CloseMessage, []byte{}); err != nil {
+	if err = c.write(websocket.CloseMessage, []byte(reason)); err != nil {
 		log.WithFields(log.Fields{"logger": "ws.connection", "method": "close"}).
 			WithError(err).Warn("Error writing close message to the connection")
 	}
@@ -162,7 +162,7 @@ func (c *conn) ReadMessage() (int, []byte, error) {
 //ReadLoop dispatches messages from the websocket to the output channel.
 func (c *conn) ReadLoop() {
 	defer func() {
-		c.Close()
+		c.Close("")
 	}()
 	c.ws.SetReadLimit(maxMessageSize)
 
@@ -207,7 +207,7 @@ func (c *conn) WriteLoop(out <-chan []byte) {
 	ticker := time.NewTicker(c.pingPeriod)
 	defer func() {
 		ticker.Stop()
-		c.Close()
+		c.Close("")
 	}()
 	for {
 		select {
@@ -249,7 +249,7 @@ func (c *conn) waitForPong() {
 	case <-time.After(c.pingTimeout):
 		log.WithFields(log.Fields{"logger": "ws.connection", "method": "waitForPong"}).
 			Info("Websocket connection timed out")
-		c.Close()
+		c.Close("Timeout")
 	case <-(*c).pong:
 		if log.GetLevel() >= log.DebugLevel {
 			log.WithFields(log.Fields{"logger": "ws.connection", "method": "waitForPong"}).

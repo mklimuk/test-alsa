@@ -103,8 +103,8 @@ func (c *ConnectionMock) WriteLoop(out <-chan []byte) {
 }
 
 //Close is a mocked method
-func (c *ConnectionMock) Close() {
-	c.Called()
+func (c *ConnectionMock) Close(reason string) {
+	c.Called(reason)
 }
 
 //Control is a mocked method

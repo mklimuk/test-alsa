@@ -40,15 +40,15 @@ func (suite *ConnectionTestSuite) TestClose() {
 	ws.On("SetWriteDeadline", mock.AnythingOfType("time.Time")).Return(nil).Once()
 	ws.On("WriteMessage", websocket.CloseMessage, []byte{}).Return(nil)
 	c := newConnection(&ws, make(chan []byte, 1), "localhost", []string{})
-	c.Close()
+	c.Close("")
 	c = newConnection(&ws, make(chan []byte, 1), "localhost", []string{})
 	ws.On("Close").Return(nil).Once()
 	ws.On("SetWriteDeadline", mock.AnythingOfType("time.Time")).Return(errors.New("test error")).Once()
-	c.Close()
+	c.Close("")
 	c = newConnection(&ws, make(chan []byte, 1), "localhost", []string{})
 	ws.On("SetWriteDeadline", mock.AnythingOfType("time.Time")).Return(nil).Once()
 	ws.On("Close").Return(errors.New("test error")).Once()
-	c.Close()
+	c.Close("")
 	ws.AssertExpectations(suite.T())
 }
 
