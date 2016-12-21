@@ -69,7 +69,7 @@ func (suite *PlaybackTestSuite) TestRegularPlayback() {
 	c.On("ReadMessage").Return(textMessage, []byte(`{"priority": 2}`), nil)
 	c.On("WriteLoop", mock.Anything).After(time.Duration(2 * time.Second)).Return()
 	c.On("ReadLoop").After(time.Duration(2 * time.Second)).Return()
-	c.On("Close", mock.Anything).Return().Once()
+	c.On("CloseWithCode", 1000).Return().Once()
 	ctrl := make(chan bool)
 	bin := make(chan []byte)
 	str := make(chan string)

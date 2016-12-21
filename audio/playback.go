@@ -127,7 +127,7 @@ func (p *play) PlayFromWsConnection(c websocket.Connection) error {
 	if p.connection != nil {
 		log.WithFields(log.Fields{"logger": "audio-endpoint.audio", "method": "registerStream"}).
 			Info("Stopping currently open connection")
-		p.connection.Close("Higher priority transmission")
+		p.connection.CloseWithCode(websocket.CloseGoingAway)
 	}
 	p.connection = c
 	p.context = context
@@ -152,17 +152,18 @@ func (p *play) doPlayFromWsConnection() {
 		out <- introStartMsg
 		if err = p.playFile(p.introFile); err != nil {
 			log.WithFields(log.Fields{"logger": "audio-endpoint.audio", "method": "doPlayFromWsConnection"}).
-				WithError(err).Error("Could not play dong")
-			p.connection.Close("Could not play dong")
-			return
+				WithError(err).Warn("Could not play dong")
+			msg, _ := json.Marshal(SignallingMsg{"playback:intro:warn", "Could not play dong"})
+			out <- msg
+		} else {
+			out <- introEndMsg
 		}
-		out <- introEndMsg
 	}
 
 	//initialize playback device
 	var dev PlaybackDevice
 	if dev, err = p.factory.New(p.context.SampleRate, p.context.Channels, p.bufParams); err != nil {
-		p.connection.Close("Could not initialize dev")
+		p.connection.CloseWithReason(websocket.CloseInternalServerErr, "Could not initialize audio device")
 	}
 
 	var buf []byte
@@ -251,7 +252,7 @@ func (p *play) cleanup() {
 		log.WithFields(log.Fields{"logger": "audio-endpoint.audio", "method": "cleanup", "bytesRead": p.context.bytesRead, "framesWrote": p.context.framesWrote}).
 			Info("Audio device read, write summary")
 	}
-	p.connection.Close("")
+	p.connection.CloseWithCode(websocket.CloseNormalClosure)
 	p.connection = nil
 	p.context = nil
 }
