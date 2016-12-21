@@ -1,5 +1,5 @@
-hash: b64172e009fbb6f4531f39750dba2b6928a0d0558b17a63999479ab0cf8b7542
-updated: 2016-12-06T17:10:47.413415485+01:00
+hash: 744e9c9fff9a4e2d6371e86d4d1d90ad1ae2063b8226e242ef68e25629d9cc9a
+updated: 2016-12-21T19:35:29.663973867+01:00
 imports:
 - name: github.com/davecgh/go-spew
   version: 5215b55f46b2b919f50a1df0eaa5886afe4e3b3d
@@ -15,23 +15,22 @@ imports:
   subpackages:
   - proto
 - name: github.com/gorilla/websocket
-  version: 1f512fc3f05332ba7117626cdfb4e07474e58e60
+  version: 3ab3a8b8831546bd18fd182c20687ca853b2bb13
 - name: github.com/manucorporat/sse
   version: ee05b128a739a0fb76c7ebd3ae4810c1de808d6d
 - name: github.com/mattn/go-isatty
   version: 30a891c33c7cde7b02a981314b4228ec99380cca
 - name: github.com/mklimuk/goalsa
-  version: b711ae6f3eff1a4f0cc4edfe321ab171027f85d4
+  version: 129a507251638cb1b76563ae1355adf9aff311a4
 - name: github.com/mklimuk/husar
   version: 99cf7cb576dff6d50a0dc7ebaf6d8e5eb4fd92e8
   repo: git@github.com:mklimuk/husar.git
   vcs: git
   subpackages:
   - errors
-  - event
   - rest
 - name: github.com/mklimuk/websocket
-  version: 1eaf08cf19e2dea5c8b5a8df14d990d2d33395f6
+  version: a3f3c862b81d8d85292fc1af048e2cff5f03b95b
 - name: github.com/pmezard/go-difflib
   version: 792786c7400a136282c1664665ae0a8db921c6c2
   subpackages:
@@ -54,7 +53,7 @@ imports:
   subpackages:
   - context
 - name: golang.org/x/sys
-  version: 5eaf0df67e70d6997a9fe0ed24383fa1b01638d3
+  version: d75a52659825e75fff6158388dddc6a5b04f9ba5
   subpackages:
   - unix
 - name: gopkg.in/go-playground/validator.v8

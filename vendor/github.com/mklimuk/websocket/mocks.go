@@ -52,6 +52,11 @@ func (c *RawConnectionMock) SetPongHandler(h func(appData string) error) {
 	c.Called(h)
 }
 
+//SetCloseHandler is a mocked method
+func (c *RawConnectionMock) SetCloseHandler(h func(code int, text string) error) {
+	c.Called(h)
+}
+
 //SetReadDeadline is a mocked method
 func (c *RawConnectionMock) SetReadDeadline(t time.Time) error {
 	args := c.Called(t)
@@ -103,8 +108,18 @@ func (c *ConnectionMock) WriteLoop(out <-chan []byte) {
 }
 
 //Close is a mocked method
-func (c *ConnectionMock) Close(reason string) {
-	c.Called(reason)
+func (c *ConnectionMock) Close() {
+	c.Called()
+}
+
+//CloseWithCode is a mocked method
+func (c *ConnectionMock) CloseWithCode(code int) {
+	c.Called(code)
+}
+
+//CloseWithReason is a mocked method
+func (c *ConnectionMock) CloseWithReason(code int, reason string) {
+	c.Called(code, reason)
 }
 
 //Control is a mocked method
