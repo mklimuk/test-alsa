@@ -1,0 +1,18 @@
+version: '2'
+services:
+  compile_x64:
+    image: "mklimuk/gobuild:1.7"
+    environment:
+      GOBIN: /go/src/github.com/mklimuk/test-alsa/dist/x64
+      HUSAR_VERSION: production
+    volumes:
+      - ../.:/go/src/github.com/mklimuk/test-alsa
+    command: sh -c "go install -v github.com/mklimuk/test-alsa"
+  compile_arm:
+    image: "mklimuk/gobuild:1.7"
+    environment:
+      HUSAR_VERSION: production
+    working_dir: /go/src/github.com/mklimuk/test-alsa/dist/arm
+    volumes:
+      - ../.:/go/src/github.com/mklimuk/test-alsa
+    command: sh -c "/usr/bin/build-arm.sh /go/src/github.com/mklimuk/test-alsa/dist/arm/test-alsa github.com/mklimuk/test-alsa"
