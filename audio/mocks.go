@@ -1,19 +1,52 @@
 package audio
 
 import (
+	"io"
+
 	"github.com/mklimuk/websocket"
 	"github.com/stretchr/testify/mock"
 )
 
-//DeviceMock is a mock of RegistryClient interface
-type DeviceMock struct {
+//RawDeviceMock is a mock of RawDevice interface
+type RawDeviceMock struct {
 	mock.Mock
 }
 
 //Write is a mocked method
-func (m *DeviceMock) Write(buffer interface{}) (samples int, err error) {
+func (m *RawDeviceMock) Write(buffer interface{}) (samples int, err error) {
 	args := m.Called(buffer)
 	return args.Int(0), args.Error(1)
+}
+
+//Close is a mocked method
+func (m *RawDeviceMock) Close() {
+	m.Called()
+}
+
+//DeviceMock is a mock of PlaybackDevice interface
+type DeviceMock struct {
+	mock.Mock
+}
+
+//FramesWrote is a mocked method
+func (m *DeviceMock) FramesWrote() int {
+	args := m.Called()
+	return args.Int(0)
+}
+
+//WriteAsync is a mocked method
+func (m *DeviceMock) WriteAsync(buffer chan []int16) chan error {
+	args := m.Called(buffer)
+	if args.Get(0) == nil {
+		return nil
+	}
+	return args.Get(0).(chan error)
+}
+
+//WriteSync is a mocked method
+func (m *DeviceMock) WriteSync(reader io.Reader) error {
+	args := m.Called(reader)
+	return args.Error(0)
 }
 
 //Close is a mocked method
@@ -32,12 +65,6 @@ func (p *PlaybackMock) DeviceBusy() (bool, int) {
 	return args.Bool(0), args.Int(1)
 }
 
-//BufferSize is a mocked method
-func (p *PlaybackMock) BufferSize() int {
-	args := p.Called()
-	return args.Int(0)
-}
-
 //PlaybackContext is a mocked method
 func (p *PlaybackMock) PlaybackContext() *StreamContext {
 	args := p.Called()
@@ -48,14 +75,8 @@ func (p *PlaybackMock) PlaybackContext() *StreamContext {
 }
 
 //PlayFromWsConnection is a mocked method
-func (p *PlaybackMock) PlayFromWsConnection(c websocket.Connection) error {
-	args := p.Called(c)
-	return args.Error(0)
-}
-
-//Close is a mocked method
-func (p *PlaybackMock) Close() {
-	p.Called()
+func (p *PlaybackMock) PlayFromWsConnection(c websocket.Connection) {
+	p.Called(c)
 }
 
 //FactoryMock is a mock of the DeficeFactory interface

@@ -32,6 +32,7 @@ type AudioConf struct {
 	DeviceBuffer  int      `yaml:"deviceBuffer"`
 	PeriodFrames  int      `yaml:"periodFrames"`
 	Periods       int      `yaml:"periods"`
+	ReadBuffer    int      `yaml:"readBuffer"` //in websocket frames
 }
 
 //GPIOConf holds I/O pin mappings and related info

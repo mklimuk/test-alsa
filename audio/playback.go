@@ -4,9 +4,7 @@ import (
 	"bufio"
 	"encoding/binary"
 	"encoding/json"
-	"errors"
 	"fmt"
-	"io"
 	"os"
 	"sync"
 
@@ -15,7 +13,6 @@ import (
 	"github.com/mklimuk/websocket"
 )
 
-const sampleSizeBytes = 2
 const textMessage = 1
 const defaultSampleRate = 22050
 const defaultChannels = 1
@@ -38,7 +35,7 @@ type SignallingMsg struct {
 type Playback interface {
 	DeviceBusy() (bool, int)
 	PlaybackContext() *StreamContext
-	PlayFromWsConnection(c websocket.Connection) error
+	PlayFromWsConnection(c websocket.Connection)
 }
 
 //StreamContext contains information about currently playing stream
@@ -56,20 +53,23 @@ type StreamContext struct {
 }
 
 type play struct {
-	connMutex  sync.Mutex
-	context    *StreamContext
-	connection websocket.Connection
-	introFile  string
-	bufParams  *BufferParams
-	factory    DeviceFactory
+	connMutex         sync.Mutex
+	context           *StreamContext
+	connection        websocket.Connection
+	introFile         string
+	samplesBufferSize int
+	bufParams         *BufferParams
+	factory           DeviceFactory
+	dev               PlaybackDevice
 }
 
 //New is the playback interface constructor
 func New(conf *config.AudioConf, factory DeviceFactory, introFile string) Playback {
 	p := play{
-		factory:   factory,
-		bufParams: &BufferParams{BufferFrames: conf.DeviceBuffer, PeriodFrames: conf.PeriodFrames, Periods: conf.Periods},
-		introFile: introFile,
+		factory:           factory,
+		bufParams:         &BufferParams{BufferFrames: conf.DeviceBuffer, PeriodFrames: conf.PeriodFrames, Periods: conf.Periods},
+		introFile:         introFile,
+		samplesBufferSize: conf.ReadBuffer,
 	}
 	if log.GetLevel() >= log.DebugLevel {
 		log.WithFields(log.Fields{"logger": "ws.audio-endpoint.audio", "method": "New", "introFile": p.introFile, "bufParams": fmt.Sprintf("%+v", &(p.bufParams))}).
@@ -91,38 +91,46 @@ func (p *play) DeviceBusy() (bool, int) {
 	return true, p.context.Priority
 }
 
-func (p *play) PlayFromWsConnection(c websocket.Connection) error {
+/*PlayFromWsConnection streams audio data from a websocket connection into an audio device.
+The first message received must be a text message containing stream context (see StreamContext type) in a JSON format.
+*/
+func (p *play) PlayFromWsConnection(c websocket.Connection) {
 	p.connMutex.Lock()
 	defer p.connMutex.Unlock()
-	//wait for the context
+
+	//the first message contains information about the stream context
+	var err error
 	var mt int
 	var message []byte
-	var err error
 	if mt, message, err = c.ReadMessage(); err != nil {
 		log.WithFields(log.Fields{"logger": "ws.audio-endpoint.audio", "method": "PlayFromWsConnection"}).
 			WithError(err).Error("Websocket read error encountered")
-		return err
+		c.CloseWithReason(websocket.CloseProtocolError, "Could not read from connection")
+		return
 	}
-
 	if mt != textMessage {
-		return errors.New("Wrong message type. First message should be a text one")
+		c.CloseWithReason(websocket.CloseInvalidFramePayloadData, "Wrong message type; first message should be a text one")
+		return
 	}
 
 	if log.GetLevel() >= log.DebugLevel {
 		log.WithFields(log.Fields{"logger": "ws.audio-endpoint.audio", "method": "PlayFromWsConnection", "message": message}).
-			Debug("Received message")
+			Debug("Received stream context message")
 	}
 	var context = new(StreamContext)
 	if err = json.Unmarshal(message, context); err != nil {
 		log.WithFields(log.Fields{"logger": "ws.audio-endpoint.audio", "method": "PlayFromWsConnection"}).
 			WithError(err).Error("Could not decode stream context")
-		return err
+		c.CloseWithReason(websocket.CloseInvalidFramePayloadData, "Could not decode stream context")
+		return
 	}
 
-	//if we try to register stream without checking if it is legitimate we get rejected
+	//stream with lower priority will get rejected
 	if p.context != nil && p.context.Priority > context.Priority {
-		return errors.New("Device busy")
+		c.CloseWithReason(websocket.CloseTryAgainLater, "Device busy")
+		return
 	}
+
 	//if there is an existing connection we have to stop it
 	if p.connection != nil {
 		log.WithFields(log.Fields{"logger": "audio-endpoint.audio", "method": "registerStream"}).
@@ -133,84 +141,100 @@ func (p *play) PlayFromWsConnection(c websocket.Connection) error {
 	p.context = context
 	//we continue in a separate goroutine
 	go p.doPlayFromWsConnection()
-	return nil
+	return
 }
 
 func (p *play) doPlayFromWsConnection() {
 	defer p.cleanup()
-	if log.GetLevel() >= log.DebugLevel {
-		log.WithFields(log.Fields{"logger": "audio-endpoint.audio", "method": "doPlayFromWsConnection"}).
-			Debug("Starting write loop")
-	}
-	//we initialize output for signalling
-	out := make(chan []byte)
-	go p.connection.WriteLoop(out)
 
 	var err error
-	//play 'dong' if requested
+	//play intro (ding-dong) if requested
 	if p.context.PlayIntro == true {
-		out <- introStartMsg
-		if err = p.playFile(p.introFile); err != nil {
-			log.WithFields(log.Fields{"logger": "audio-endpoint.audio", "method": "doPlayFromWsConnection"}).
-				WithError(err).Warn("Could not play dong")
-			msg, _ := json.Marshal(SignallingMsg{"playback:intro:warn", "Could not play dong"})
-			out <- msg
-		} else {
-			out <- introEndMsg
+		if log.GetLevel() >= log.DebugLevel {
+			log.WithFields(log.Fields{"logger": "audio-endpoint.audio", "method": "doPlayFromWsConnection", "Connection": p.connection.ID()}).
+				Debug("Playing intro file")
 		}
+		p.connection.WriteMessage(websocket.TextMessage, introStartMsg)
+		if err = p.PlayFile(p.introFile); err != nil {
+			log.WithFields(log.Fields{"logger": "audio-endpoint.audio", "method": "doPlayFromWsConnection", "Connection": p.connection.ID()}).
+				WithError(err).Warn("Could not play intro file")
+			msg, _ := json.Marshal(SignallingMsg{"playback:intro:warn", "Could not play intro"})
+			p.connection.WriteMessage(websocket.TextMessage, msg)
+			//we continue anyway
+		}
+		p.connection.WriteMessage(websocket.TextMessage, introEndMsg)
 	}
 
 	//initialize playback device
-	var dev PlaybackDevice
-	if dev, err = p.factory.New(p.context.SampleRate, p.context.Channels, p.bufParams); err != nil {
+	if p.dev, err = p.factory.New(p.context.SampleRate, p.context.Channels, p.bufParams); err != nil {
 		p.connection.CloseWithReason(websocket.CloseInternalServerErr, "Could not initialize audio device")
+		return
 	}
+	devbuf := make(chan []int16, p.samplesBufferSize)
+	var deverr chan error
+	defer close(devbuf)
 
+	//prepare connection read buffers
 	var buf []byte
 	buf16 := make([]int16, p.context.BufferSize)
 
-	//now we can start reading data
+	//start the connection read routine
 	if log.GetLevel() >= log.DebugLevel {
-		log.WithFields(log.Fields{"logger": "audio-endpoint.audio", "method": "PlayFromWsConnection"}).
+		log.WithFields(log.Fields{"logger": "audio-endpoint.audio", "method": "doPlayFromWsConnection", "Connection": p.connection.ID()}).
 			Debug("Starting read loop")
 	}
 	go p.connection.ReadLoop()
 	bin, _ := p.connection.In()
-	ctrl := p.connection.Control()
 
 	var ok bool
-	var wrote int
-
+	var writing bool
 	for {
 		select {
-		case buf, ok = <-bin:
+		case buf, ok = <-bin: //binary audio data from the websocket
 			if !ok {
 				if log.GetLevel() >= log.InfoLevel {
-					log.WithFields(log.Fields{"logger": "audio-endpoint.audio", "method": "PlayFromWsConnection", "Connection": p.connection.ID()}).
+					log.WithFields(log.Fields{"logger": "audio-endpoint.audio", "method": "doPlayFromWsConnection", "Connection": p.connection.ID()}).
 						Info("Binary input channel is closed; aborting read loop")
 				}
 				return
 			}
-			convertBuffers(buf, buf16)
-			var err error
-			if wrote, err = dev.Write(buf16); err != nil {
-				log.WithFields(log.Fields{"logger": "audio-endpoint.audio", "method": "PlayFromWsConnection"}).
-					WithError(err).Error("Could not write buffer content to device")
-				return
-			}
 			if log.GetLevel() >= log.DebugLevel {
-				log.WithFields(log.Fields{"logger": "audio-endpoint.audio", "method": "PlayFromWsConnection", "wroteFrames": wrote, "readBytes": len(buf)}).
-					Debug("Wrote read buffer to device")
+				log.WithFields(log.Fields{"logger": "audio-endpoint.audio", "method": "doPlayFromWsConnection", "readBytes": len(buf)}).
+					Debug("Read bytes from connection")
 			}
-			p.context.framesWrote += wrote
 			p.context.bytesRead += len(buf)
-		case <-ctrl:
+
+			//convert to int16 and push to the output buffer
+			convertBuffers(buf, buf16)
+			devbuf <- buf16
+
+			//if the buffer is full we start sending audio to the audio device
+			if !writing && len(devbuf) == cap(devbuf) {
+				if log.GetLevel() >= log.InfoLevel {
+					log.WithFields(log.Fields{"logger": "audio-endpoint.audio", "method": "doPlayFromWsConnection", "Connection": p.connection.ID()}).
+						Info("Starting audio device write routine")
+				}
+				deverr = p.dev.WriteAsync(devbuf)
+				writing = true
+			}
+		case <-p.connection.Control(): //connection control chanel
+			if log.GetLevel() >= log.DebugLevel {
+				log.WithFields(log.Fields{"logger": "audio-endpoint.audio", "method": "doPlayFromWsConnection"}).
+					Debug("Received connection close signal")
+			}
+			return
+		case err = <-deverr: //errors from audio device
+			log.WithFields(log.Fields{"logger": "audio-endpoint.audio", "method": "doPlayFromWsConnection"}).
+				WithError(err).Error("Could not write buffer content to device")
+			p.connection.CloseWithReason(websocket.CloseInternalServerErr, "Could not write buffer content to audio device")
 			return
 		}
 	}
 }
 
-func (p *play) playFile(filepath string) error {
+//PlayFile sends contents of the file represented by 'filepath' to Alsa audio device.
+//This method uses default sample rate and channels number.
+func (p *play) PlayFile(filepath string) error {
 	var f *os.File
 	var err error
 	if f, err = os.Open(filepath); err != nil {
@@ -225,31 +249,19 @@ func (p *play) playFile(filepath string) error {
 	if dev, err = p.factory.New(defaultSampleRate, defaultChannels, p.bufParams); err != nil {
 		return err
 	}
-
-	buf := make([]byte, 8192)
-	buf16 := make([]int16, 8192/sampleSizeBytes)
-
-	var read int
-	for {
-		if read, err = r.Read(buf); err != nil && err != io.EOF {
-			return err
-		}
-		if read == 0 {
-			break
-		}
-		convertBuffers(buf, buf16)
-		if _, err = dev.Write(buf16); err != nil {
-			log.WithFields(log.Fields{"logger": "audio-endpoint.audio", "method": "playFile"}).
-				WithError(err).Error("Could not write buffer content to device")
-			return err
-		}
-	}
+	defer dev.Close()
+	dev.WriteSync(r)
 	return nil
 }
 
 func (p *play) cleanup() {
+	var wrote int
+	if p.dev != nil {
+		wrote = p.dev.FramesWrote()
+		p.dev.Close()
+	}
 	if log.GetLevel() >= log.InfoLevel {
-		log.WithFields(log.Fields{"logger": "audio-endpoint.audio", "method": "cleanup", "bytesRead": p.context.bytesRead, "framesWrote": p.context.framesWrote}).
+		log.WithFields(log.Fields{"logger": "audio-endpoint.audio", "method": "cleanup", "bytesRead": p.context.bytesRead, "framesWrote": wrote}).
 			Info("Audio device read, write summary")
 	}
 	p.connection.CloseWithCode(websocket.CloseNormalClosure)

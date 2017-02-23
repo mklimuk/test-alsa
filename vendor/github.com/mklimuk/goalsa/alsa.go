@@ -310,7 +310,7 @@ func (p *PlaybackDevice) Write(buffer interface{}) (samples int, err error) {
 // The pending samples on the buffer are ignored.
 func (p *PlaybackDevice) Drop() error {
 	var ret int
-	if ret = C.snd_pcm_drop(handle.cHandle); ret < 0 {
+	if ret = int(C.snd_pcm_drop(p.h)); ret < 0 {
 		return createError("Could not drop the stream", C.int(ret))
 	}
 	return nil
